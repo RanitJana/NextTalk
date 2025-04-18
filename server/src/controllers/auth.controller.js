@@ -1,4 +1,4 @@
-import { User } from "../models/user.model";
+import { User } from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 
 const generateAccessAndRefreshTokens = async (userId) => {
