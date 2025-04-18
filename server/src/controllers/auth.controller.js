@@ -1,6 +1,37 @@
 import { User } from "../models/user.model";
 import asyncHandler from "express-async-handler";
 
+
+
+const generateAccessAndRefreshTokens = async (userId) => {
+  /*
+   * generate Access and Refresh Token,
+   * Update refresh Token into db ( just update refreshToken, else untouched )
+   * return Access and Refresh Token
+   */
+
+  try {
+    const user = await User.findById(userId);
+
+    // generate Access and Refresh Token,
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    // Update refresh Token into db 
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    // return Access and Refresh Token
+    return { accessToken, refreshToken };
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Something went wrong while generating tokens"
+      })
+  }
+};
+
 const registerUser = asyncHandler(async (req, res) => {
   /*
    * step#1: take input name, email, password validation them -> not empty
@@ -124,5 +155,10 @@ const loginUser = asyncHandler(async (req, res) => {
     });
 });
 
-export { registerUser };
-export { registerUser, loginUser };
+
+
+export {
+  registerUser,
+  loginUser,
+
+};
