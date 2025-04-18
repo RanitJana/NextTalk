@@ -1,8 +1,6 @@
 import { User } from "../models/user.model";
 import asyncHandler from "express-async-handler";
 
-
-
 const generateAccessAndRefreshTokens = async (userId) => {
   /*
    * generate Access and Refresh Token,
@@ -17,18 +15,16 @@ const generateAccessAndRefreshTokens = async (userId) => {
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
-    // Update refresh Token into db 
+    // Update refresh Token into db
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
 
     // return Access and Refresh Token
     return { accessToken, refreshToken };
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Something went wrong while generating tokens"
-      })
+    res.status(500).json({
+      message: "Something went wrong while generating tokens",
+    });
   }
 };
 
@@ -155,10 +151,4 @@ const loginUser = asyncHandler(async (req, res) => {
     });
 });
 
-
-
-export {
-  registerUser,
-  loginUser,
-
-};
+export { registerUser, loginUser };

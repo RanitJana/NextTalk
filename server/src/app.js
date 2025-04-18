@@ -25,4 +25,10 @@ app.get("/", (req, res) => {
   });
 });
 
+import login from "./routes/login.route.js";
+import signup from "./routes/signup.route.js";
+
+app.use("/api/v1/login", login);
+app.use("/api/v1/signup", signup);
+
 export default app;
