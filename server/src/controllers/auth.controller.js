@@ -1,5 +1,5 @@
-import { User } from "../models/user.model.js";
-import asyncHandler from "express-async-handler";
+import User from "../models/user.model.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   /*
@@ -28,7 +28,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
   }
 };
 
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = AsyncHandler(async (req, res) => {
   /*
    * step#1: take input name, email, password validation them -> not empty
    * step#2: check for profilePicture given or not... ( from middleware )
@@ -79,7 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = AsyncHandler(async (req, res) => {
   /*
    * step#1: take input name, email, password... validation them -> not empty
    * step#2: find user with given email

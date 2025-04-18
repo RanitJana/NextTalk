@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { _env } from "../constant";
+import { _env } from "../constant.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -65,14 +65,14 @@ userSchema.methods.generateRefreshToken = function () {
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    const salt = await bcryptjs.genSalt(10);
+    this.password = await bcryptjs.hash(this.password, salt);
   }
   return next();
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  return await bcryptjs.compare(password, this.password);
 };
 
 const User = mongoose.model("User", userSchema);
