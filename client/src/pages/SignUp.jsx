@@ -61,7 +61,7 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" enctype="multipart/form-data">
           {/* Name with Upload Icon */}
           <div className="relative">
             <input
@@ -82,6 +82,7 @@ export default function SignupPage() {
                   accept="image/*"
                   className="hidden"
                   onChange={handleImageChange}
+                  name="profilePic"
                 />
               </div>
             </label>
