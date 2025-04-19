@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { signup } from "../store/useAuthStore.js"; // Adjust the import path as necessary
 
 export default function SignupPage() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [image, setImage] = useState(null);
+  const [public_id, setPublic_id] = useState("");
 
   const onSubmit = (data) => {
     const formData = { ...data, image };
     console.log(formData);
-    // Handle form submission logic
+    signup(formData);
   };
 
   const handleImageChange = (e) => {
@@ -16,8 +18,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
-      <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-md">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className=" w-full max-w-md p-6 rounded-2xl shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
