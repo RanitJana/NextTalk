@@ -68,7 +68,7 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" enctype="multipart/form-data">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Name with Upload Icon */}
           <div className="relative">
             <input
