@@ -9,7 +9,7 @@ cloudinary.config({
 
 const uploadFile = async function (filePath, name) {
   const uploadResult = await cloudinary.uploader
-    .upload(filePath, { public_id: `${name}` })
+    .upload(filePath, { public_id: `${name}`, folder: "NextTalk" })
     .catch((err) => {
       console.log(err);
     });
