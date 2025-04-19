@@ -94,7 +94,7 @@ const putInfo = AsyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
   return res.status(200).json({
     success: true,
-    message: "Profile updated successfully",
+    message: "Profile updated successfully!",
     user: user,
   });
 });

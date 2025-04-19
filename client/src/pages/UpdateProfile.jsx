@@ -1,7 +1,7 @@
 import { useAuthStore } from "../store/useAuthStore.js";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Upload, Image as ImageIcon, X } from "lucide-react";
+import { Upload, Image as ImageIcon, X, Loader2 } from "lucide-react";
 
 export default function UpdateProfile() {
   const currentUser = useAuthStore();
@@ -27,7 +27,7 @@ export default function UpdateProfile() {
     currentUser.authUser.user.profilePic
   );
 
-  const { updateProfile } = useAuthStore();
+  const { updateProfile,isUpdatingProfile } = useAuthStore();
 
   const onSubmit = () => {
     const formData = {
@@ -39,6 +39,8 @@ export default function UpdateProfile() {
 
     console.log(formData);
     updateProfile(formData);
+
+    // isUpdatingProfile(false);
   };
 
   const handleImageChange = (e) => {
@@ -57,6 +59,18 @@ export default function UpdateProfile() {
   };
 
   return (
+
+    <>
+
+    {isUpdatingProfile && (
+            <div className="absolute inset-0 w-full h-full bg-black opacity-30 z-50">
+              <div className="flex justify-center items-center h-full">
+                <Loader2 className="animate-spin text-sky-600" />
+              </div>
+            </div>
+          )}
+
+
     <div className="relative h-full overflow-auto">
       <div className="h-full min-h-[35rem] flex items-center justify-center p-4 absolute left-0 right-0">
         <div className="w-full max-w-md p-8 rounded-xl shadow-lg">
@@ -163,11 +177,13 @@ export default function UpdateProfile() {
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200"
             >
-              SAVE
+              {isUpdatingProfile ? "Updating..." : "Update"}
             </button>
           </form>
         </div>
       </div>
     </div>
+
+    </>
   );
 }

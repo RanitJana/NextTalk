@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +11,7 @@ export default function LogInPage() {
     formState: { errors },
   } = useForm();
 
-  const { login } = useAuthStore();
+  const { login, isLoggingIn } = useAuthStore();
 
   const onSubmit = (data) => {
     // const formData = { ...data };
@@ -23,6 +24,13 @@ export default function LogInPage() {
     <div className="absolute left-0 top-0 h-full w-full p-4 overflow-y-auto">
       <div className="min-h-[20rem] h-full w-full flex items-center justify-center">
         <div className=" w-full max-w-md p-8 rounded-xl shadow-lg">
+          {isLoggingIn && (
+            <div className="absolute inset-0 w-full h-full bg-black opacity-30 z-50">
+              <div className="flex justify-center items-center h-full">
+                <Loader2 className="animate-spin text-sky-600" />
+              </div>
+            </div>
+          )}
           <h2 className="text-2xl font-bold mb-6 text-center">Log In</h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
