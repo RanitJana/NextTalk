@@ -82,6 +82,13 @@ const putContentMessage = AsyncHandler(async (req, res) => {
     });
 
   const updatedMessage = await messageSchema.findById(messageId);
+
+  if (!updatedMessage)
+    return res.status(400).json({
+      success: false,
+      message: "No such message is found",
+    });
+
   updatedMessage.content = content;
 
   await updatedMessage.save({ validateBeforeSave: false });
@@ -93,4 +100,39 @@ const putContentMessage = AsyncHandler(async (req, res) => {
   });
 });
 
-export { postMessage, putContentMessage };
+const putReactionMessage = AsyncHandler(async (req, res) => {
+  const { messageId } = req.params;
+  const { reaction } = req.body ?? {};
+
+  if (!messageId)
+    return res.status(400).json({
+      success: false,
+      message: "Invalid message",
+    });
+
+  const messageInfo = await messageSchema.findById(messageId);
+
+  if (!messageInfo)
+    return res.status(400).json({
+      success: false,
+      message: "No such message is found",
+    });
+
+  const userId = req.user._id;
+
+  messageInfo.reactions = messageInfo.reactions.filter(
+    (item) => item.userId.toString() !== userId.toString()
+  );
+
+  if (reaction) messageInfo.reactions.push({ userId, reaction });
+
+  await messageInfo.save({ validateBeforeSave: false });
+
+  return res.status(200).json({
+    success: true,
+    message: "Message updated",
+    updatedMessage: messageInfo,
+  });
+});
+
+export { postMessage, putContentMessage, putReactionMessage };
