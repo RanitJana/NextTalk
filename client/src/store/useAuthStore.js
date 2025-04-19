@@ -92,10 +92,7 @@ export const useAuthStore = create((set, get) => ({
         set({ isUpdatingProfile: true });
         try {
 
-            const res = null;
-            if (!data.info) {
-                res = await axiosInstance.put('/user/info', data.info);
-            }
+            let res = await axiosInstance.put('/user/info', data);
             if (data.profilePic) {
                 const formData = new FormData();
                 formData.append('profilePic', data.profilePic);
