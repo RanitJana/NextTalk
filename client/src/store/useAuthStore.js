@@ -1,69 +1,92 @@
-import { create } from "zustand";
-import { axiosInstance } from "../lib/axios.js";
-import toast from "react-hot-toast";
+import { create } from 'zustand';
+import { axiosInstance } from '../lib/axios.js';
+import toast from 'react-hot-toast';
+
+
+
 
 export const useAuthStore = create((set, get) => ({
-  authUser: null,
-  isSigningUp: false,
-  isLoggingIn: false,
-  isUpdatingProfile: false,
+    authUser: null,
+    isSigningUp: false,
+    isLoggingIn: false,
+    isUpdatingProfile: false,
 
-  isCheckingAuth: true,
 
-  checkAuth: async () => {
-    try {
-      const res = await axiosInstance.get("/check");
 
-      set({ authUser: res.data.user });
-    } catch (error) {
-      console.log("error in checkAuth:", error);
+    isCheckingAuth: true,
 
-      set({ authUser: null });
-    } finally {
-      set({ isCheckingAuth: false });
-    }
-  },
+    checkAuth: () => {
 
-  signup: async (data) => {
-    set({ isSigningUp: true });
-    try {
-      const res = await axiosInstance.post("/signup", data);
-      console.log("res in signup:", res.data);
+        const localUser = localStorage.getItem('authUser');
+        if (localUser) {
+            set({ authUser: JSON.parse(localUser), isCheckingAuth: false });
+        }
+        else {
+            set({ isCheckingAuth: false });
+        }
 
-      set({ authUser: res.data });
-      toast.success(res.data.message);
-    } catch (error) {
-      toast.error(error.response.data.message);
-      console.log("error in signup:", error);
-    } finally {
-      set({ isSigningUp: false });
-    }
-  },
-  logout: async () => {
-    try {
-      await axiosInstance.post("/logout");
-      set({ authUser: null });
-      toast.success("Logged out successfully");
-    } catch (error) {
-      console.log("error in logout:", error);
+    },
 
-      toast.error("An error occurred while logging out");
-    }
-  },
+    signup: async (data) => {
+        set({ isSigningUp: true });
+        try {
+            const res = await axiosInstance.post('/signup', data);
+            console.log('res in signup:', res.data);
 
-  login: async (data) => {
-    set({ isLoggingIn: true });
-    try {
-      const res = await axiosInstance.post("/login", data);
-      set({ authUser: res.data });
-      toast.success(res.data.message);
+            set({ authUser: res.data });
+            localStorage.setItem('authUser', JSON.stringify(res.data));
+            toast.success(res.data.message);
 
-      get().connectSocket();
-    } catch (error) {
-      toast.error(error.response.data.message);
-      console.log("error in login:", error);
-    } finally {
-      set({ isLoggingIn: false });
-    }
-  },
+        } catch (error) {
+            toast.error(error.response.data.message);
+            console.log('error in signup:', error);
+        }
+        finally {
+            set({ isSigningUp: false });
+        }
+    },
+
+    logout: async () => {
+        try {
+            await axiosInstance.post('/logout');
+            set({ authUser: null });
+            toast.success('Logged out successfully');
+        } catch (error) {
+            console.log('error in logout:', error);
+
+            toast.error('An error occurred while logging out');
+        }
+    },
+
+    login: async (data) => {
+        set({ isLoggingIn: true });
+        try {
+            const res = await axiosInstance.post('/login', data);
+            set({ authUser: res.data });
+            localStorage.setItem('authUser', JSON.stringify(res.data));
+            toast.success(res.data.message);
+
+
+        } catch (error) {
+            toast.error(error.response.data.message);
+            console.log('error in login:', error);
+
+        }
+        finally {
+            set({ isLoggingIn: false });
+        }
+    },
+
+    logout: async () => {
+        try {
+            set({ authUser: null });
+            localStorage.removeItem('authUser');
+            toast.success('Logged out successfully');
+        } catch (error) {
+            console.log('error in logout:', error);
+            toast.error('An error occurred while logging out');
+        }
+    },
+
+
 }));
