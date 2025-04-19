@@ -1,7 +1,7 @@
 import { useAuthStore } from "../store/useAuthStore.js";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { Upload, Image as ImageIcon, X } from "lucide-react";
+// import { Upload, Image as ImageIcon, X } from "lucide-react";
 
 export default function LogInPage() {
   const {

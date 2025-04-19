@@ -12,6 +12,7 @@ import SettingPage from "./pages/SettingPage.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import LoginPage from "./pages/LogIn.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import UpdateProfile from "./pages/UpdateProfile.jsx";
 
 function App() {
   const { theme } = useThemeStore();
@@ -47,6 +48,12 @@ function App() {
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
         />
+
+        <Route
+          path="/profile"
+          element={authUser ? <UpdateProfile /> : <Navigate to="/login" />}
+        />
+
         <Route path="/settings" element={<SettingPage />} />
         {/* <Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} /> */}
       </Routes>
@@ -55,5 +62,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App;
