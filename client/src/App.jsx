@@ -22,7 +22,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser }); //for debug purposes
+  // console.log({ authUser }); //for debug purposes
   if (isCheckingAuth && !authUser) {
     return (
       <div
