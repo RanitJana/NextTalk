@@ -1,7 +1,7 @@
 import { useAuthStore } from "../store/useAuthStore.js";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Upload, Image as ImageIcon, X } from "lucide-react";
+import { Upload, Image as ImageIcon, X, Loader2 } from "lucide-react";
 
 export default function SignupPage() {
   const {
@@ -13,7 +13,7 @@ export default function SignupPage() {
   const [profilePic, setProfilePic] = useState(null);
   const [previewImage, setPreviewImage] = useState("/defaultUser.jpg");
 
-  const { signup } = useAuthStore();
+  const { signup,isSigningUp } = useAuthStore();
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -44,6 +44,16 @@ export default function SignupPage() {
   };
 
   return (
+<>
+    {isSigningUp && (
+      <div className="absolute inset-0 w-full h-full bg-black opacity-30 z-50">
+        <div className="flex justify-center items-center h-full">
+          <Loader2 className="animate-spin text-sky-600" />
+        </div>
+      </div>
+    )}
+
+
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md p-8 rounded-xl shadow-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
@@ -130,10 +140,12 @@ export default function SignupPage() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200"
           >
-            Create Account
+            {isSigningUp ? "Signing up..." : "Sign Up"}
           </button>
         </form>
       </div>
     </div>
+
+    </>
   );
 }
