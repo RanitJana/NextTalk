@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore.js";
 
 const ChatContext = createContext();
+
 export const useChatContext = () => {
   return useContext(ChatContext);
 };
@@ -9,8 +10,8 @@ export const useChatContext = () => {
 const ChatProvider = ({ children }) => {
   const currentUser = useAuthStore();
 
-  const [user, setUser] = useState();
-  const [selectedChat, setSelectedChat] = useState();
+  const [user, setUser] = useState(null);
+  const [selectedChat, setSelectedChat] = useState(null);
   const [chats, setChats] = useState([]);
 
   useEffect(() => {

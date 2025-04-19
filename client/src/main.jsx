@@ -7,10 +7,10 @@ import ChatProvider from "./context/ChatProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <SocketProvider>
-      <ChatProvider>
+    <ChatProvider>
+      <SocketProvider>
         <App />
-      </ChatProvider>
-    </SocketProvider>
+      </SocketProvider>
+    </ChatProvider>
   </BrowserRouter>
 );

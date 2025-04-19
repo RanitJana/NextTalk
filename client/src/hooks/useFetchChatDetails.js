@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useAuthStore } from "../store/useAuthStore.js";
+// import { useAuthStore } from "../store/useAuthStore.js";
+import { useChatContext } from "../context/ChatProvider.jsx";
 
 export default function useFetchChatDetails(chat) {
-  const currentUser = useAuthStore();
+  const { user } = useChatContext();
 
   const isGroupChat = chat.isGroupChat;
 
@@ -18,7 +19,7 @@ export default function useFetchChatDetails(chat) {
         const firstUser = chat.users[0],
           secondUser = chat.users[1];
 
-        if (firstUser._id.toString() == currentUser._id.toString()) {
+        if (firstUser._id.toString() == user._id.toString()) {
           setChatName(secondUser.name);
           setChatIcon(secondUser.profilePic);
         } else {
@@ -27,8 +28,7 @@ export default function useFetchChatDetails(chat) {
         }
       }
     })();
-  }, [chat, currentUser._id, isGroupChat]);
-  // console.log(currentUser);
+  }, [chat, user._id, isGroupChat]);
 
   return { ...chat, chatName, chatIcon };
 }
