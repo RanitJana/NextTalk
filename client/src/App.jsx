@@ -20,21 +20,24 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth])
+  }, [checkAuth]);
 
   console.log({ authUser }); //for debug purposes
   if (isCheckingAuth && !authUser) {
     return (
-      <div className='flex justify-center items-center h-screen' data-theme={theme}>
-        <Loader className='size-10 animate-spin bg-base-100' />
+      <div
+        className="flex justify-center items-center h-screen"
+        data-theme={theme}
+      >
+        <Loader className="size-10 animate-spin bg-base-100" />
       </div>
-    )
+    );
   }
 
   return (
-    <div data-theme={theme}>
+    <div data-theme={theme} className="grid grid-rows-[4rem_1fr] h-dvh">
       <Navbar />
-      <div className="pt-16"></div>
+      <div className="">
       <Routes>
         <Route
           path="/"
@@ -57,12 +60,11 @@ function App() {
         <Route path="/settings" element={<SettingPage />} />
         {/* <Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} /> */}
       </Routes>
+      </div>
 
       <Toaster />
     </div>
   );
 }
-
-
 
 export default App;
