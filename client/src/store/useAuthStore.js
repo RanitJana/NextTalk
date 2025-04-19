@@ -84,6 +84,8 @@ export const useAuthStore = create((set, get) => ({
                 formData.append('profilePic', data.profilePic);
                 res = await axiosInstance.put('/user/avatar', formData);
             }
+            set({ authUser: res.data });
+            localStorage.setItem("authUser", JSON.stringify(res.data));
 
             toast.success(res.data.message);
         } catch (error) {

@@ -62,6 +62,7 @@ const putAvatar = AsyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Profile pic updated!",
+    user: user,
   });
 });
 
@@ -94,6 +95,7 @@ const putInfo = AsyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Profile updated successfully",
+    user: user,
   });
 });
 
