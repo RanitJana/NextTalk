@@ -9,20 +9,16 @@ export default function UpdateProfile() {
   const [name, setName] = useState(currentUser.authUser.user.name);
   const [email, setEmail] = useState(currentUser.authUser.user.email);
   const [bio, setBio] = useState(currentUser.authUser.user.bio);
-  const [profilePic, setProfilePic] = useState(
-    currentUser.authUser.user.profilePic
-  );
+  const [profilePic, setProfilePic] = useState(currentUser.authUser.user.profilePic);
+  const [previewImage, setPreviewImage] = useState(currentUser.authUser.user.profilePic);
 
   const {
     register,
     handleSubmit,
   } = useForm();
 
-  const [previewImage, setPreviewImage] = useState(
-    currentUser.authUser.user.profilePic
-  );
-
   const { updateProfile, isUpdatingProfile } = useAuthStore();
+
 
   const onSubmit = () => {
     const formData = {
