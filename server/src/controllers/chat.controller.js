@@ -1,6 +1,10 @@
 import User from "../models/user.model.js";
 import Chat from "../models/chat.model.js";
 import AsyncHandler from "../utils/AsyncHandler.js";
+import { fileURLToPath } from "url";
+import path from "path";
+import fs from "fs/promises";
+import { uploadFile } from "../utils/cloudinary.js";
 
 const createOneToOneChat = AsyncHandler(async (req, res) => {
   /*
@@ -109,27 +113,31 @@ const createGroupChat = AsyncHandler(async (req, res) => {
 
   // step#1: take input : group name , users and groupIcon(if available)
   const { users, groupName } = req.body;
-  // const groupIcon = req.file ? req.file.path : "";
+  const file = req.file;
+  console.log("file: ", file);
 
-  // console.log("groupIcon: ", groupIcon);
+  let groupIconUrl = null;
 
-  let groupIconUrl =
-    "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg";
-  // if (groupIcon) {
-  //     // upload on cloudinary
+  if (file) {
+    const filePath = path.join(
+      __dirname,
+      "../public/uploads/",
+      file.filename
+    );
+    try {
+      const uploadedFileInfo = await uploadFile(
+        filePath,
+        file.filename
+      );
+      groupIconUrl = uploadedFileInfo.url;
+      console.log(groupIconUrl)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      await fs.unlink(filePath);
+    }
+  }
 
-  //     let groupIconUpload = await uploadOnCloudinary(groupIcon, req.file.filename);
-
-  //     if (groupIcon && !groupIconUpload.secure_url) {
-  //         res
-  //             .status(400)
-  //             .json({
-  //                 message: "Something went wrong while uploading groupIcon pic on cloudinary"
-  //             })
-  //     }
-  //     console.log("groupIconUrl: ", groupIconUpload);
-  //     groupIconUrl = groupIconUpload.secure_url;
-  // }
 
   if (!users || !groupName) {
     return res.status(400).json({
@@ -158,7 +166,7 @@ const createGroupChat = AsyncHandler(async (req, res) => {
       users: allUsers,
       isGroupChat: true,
       groupAdmin: req.user,
-      groupIcon: groupIconUrl.secure_url,
+      groupIcon: groupIconUrl ?? "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg",
     });
 
     const createdGroupChat = await Chat.findOne({ _id: groupChat._id })

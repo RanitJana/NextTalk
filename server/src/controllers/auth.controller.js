@@ -30,7 +30,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = AsyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, bio } = req.body;
   const file = req.file;
 
   console.log(file)
@@ -39,6 +39,14 @@ const registerUser = AsyncHandler(async (req, res) => {
     return res.status(400).json({
       success: false,
       message: "All fields are required...",
+    });
+  }
+
+  const isUserExist = await User.find({ email });
+  if (isUserExist.length > 0) {
+    return res.status(400).json({
+      success: false,
+      message: "User already exists with this email",
     });
   }
 
@@ -68,6 +76,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     email: email,
     password: password,
     profilePic: imageUrl ?? "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+    bio: bio ?? "I am using NextTalk only",
   });
 
   if (!user) {
