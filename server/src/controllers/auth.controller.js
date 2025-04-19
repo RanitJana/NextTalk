@@ -33,8 +33,6 @@ const registerUser = AsyncHandler(async (req, res) => {
   const { name, email, password, bio } = req.body;
   const file = req.file;
 
-  console.log(file)
-
   if ([name, email, password].some((field) => !(field && field.trim()))) {
     return res.status(400).json({
       success: false,
