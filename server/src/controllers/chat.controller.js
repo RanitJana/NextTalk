@@ -140,7 +140,7 @@ const createGroupChat = AsyncHandler(async (req, res) => {
 
   const { users, groupName } = req.body;
   const file = req.file;
-  console.log("file: ", file);
+  // console.log("file: ", file);
 
   let groupIconUrl = null;
 
@@ -415,7 +415,7 @@ const updateGroupIcon = AsyncHandler(async (req, res) => {
         file.filename
       );
       imageUrl = uploadedFileInfo.url;
-      console.log(imageUrl)
+      // console.log(imageUrl)
     } catch (error) {
       console.log(error);
     } finally {
@@ -522,6 +522,50 @@ const deleteGroupIcon = AsyncHandler(async (req, res) => {
   });
 });
 
+const leaveGroup = AsyncHandler(async (req, res) => {
+  const { chatId } = req.body;
+
+  if (!chatId) {
+    return res.status(400).json({
+      success: false,
+      message: "ChatId not found",
+    });
+  }
+
+  const chat = await Chat.findById(chatId);
+  if (!chat) {
+    return res.status(400).json({
+      success: false,
+      message: "Chat not found",
+    });
+  }
+  if (chat.isGroupChat) {
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull: { users: req.user._id },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+    if (!updatedChat) {
+      return res.status(400).json({
+        success: false,
+        message: `GroupChat not updated `,
+      });
+    }
+    return res.status(201).json({
+      success: true,
+      message: "Group left successfully",
+      chat: updatedChat,
+    });
+  }
+});
+
+
 export {
   createOneToOneChat,
   fetchAllChats,
@@ -530,6 +574,7 @@ export {
   removeFromGroup,
   renameGroup,
   updateGroupIcon,
-  deleteGroupIcon
+  deleteGroupIcon,
+  leaveGroup
 
 };
