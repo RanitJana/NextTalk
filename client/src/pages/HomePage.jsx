@@ -1,20 +1,13 @@
-import React, { useState } from "react";
-
-const chats = [...Array(3)].map((_, i) => ({
-  id: i,
-  name: `User ${i + 1}`,
-  lastMessage: "Hey there!",
-}));
-
-const fetchChats = () => {
-
-}
-
-
+import React, { useCallback, useEffect, useState } from "react";
+import { fetchChats } from "../api/chat.api.js";
+import { useAuthStore } from "../store/useAuthStore.js";
+import ChatUser from "../components/ChatUser.jsx";
 
 const HomePage = () => {
+  const currentUser = useAuthStore().authUser.user;
 
-  const { selectedChat, setSelectedChat, chats, setChats, user } = ChatState();
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [chats, setChats] = useState([]);
 
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
@@ -25,11 +18,22 @@ const HomePage = () => {
     setSelectedChat(null);
   };
 
+  const getAllChats = useCallback(async () => {
+    const info = await fetchChats();
+    if (info?.chats) {
+      setChats(info.chats);
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllChats();
+  }, [getAllChats]);
+
   return (
     <div className="h-vh flex sm:flex-row flex-col bg-base text-base-content h-full">
       {/* Chat List Sidebar */}
       <aside
-        className={`sm:w-1/4 md:w-1/5 border-r border-base-300 flex flex-col h-full ${selectedChat ? "hidden sm:flex" : "flex"
+        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${selectedChat ? "hidden sm:flex" : "flex"
           }`}
       >
         <div className="p-4 border-b border-base-300 font-bold text-lg bg-base-200">
@@ -38,16 +42,7 @@ const HomePage = () => {
         <div className="relative h-full">
           <div className="overflow-y-auto h-full w-full flex-1 absolute left-0 top-0">
             {chats.map((chat) => (
-              <div
-                key={chat.id}
-                className="p-4 hover:bg-base-200 cursor-pointer border-b border-base-300"
-                onClick={() => handleSelectChat(chat)}
-              >
-                <div className="font-semibold">{chat.name}</div>
-                <div className="text-sm text-base-content/70">
-                  {chat.lastMessage}
-                </div>
-              </div>
+              <ChatUser key={chat._id} chat={chat} currentUser={currentUser} />
             ))}
           </div>
         </div>

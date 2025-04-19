@@ -22,7 +22,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser }); //for debug purposes
+  // console.log({ authUser }); //for debug purposes
   if (isCheckingAuth && !authUser) {
     return (
       <div
@@ -41,7 +41,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={authUser ? <HomePage /> : <Navigate to="/login" />}
+          element={authUser ? <HomePage /> : <Navigate to="/signup" />}
         />
         <Route
           path="/signup"
