@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { fetchChats } from "../api/chat.api.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import ChatUser from "../components/ChatUser.jsx";
-import useFetchChatDetails from "../hooks/useFetchChatDetails.js";
+import { getChatName, getProfilePic } from "../utils/chat.js";
 import ChatBox from "../components/ChatBox.jsx";
 
 const HomePage = () => {
@@ -14,15 +14,11 @@ const HomePage = () => {
   const [PicInfo, setPicInfo] = useState(null);
   const [chatName, setChatName] = useState(null);
 
-
-
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
-    // console.log("Selected chat:", selectedChat);
-    const { chatName, chatIcon } = useFetchChatDetails(chat);
-    setChatName(chatName);
-    setPicInfo(chatIcon);
 
+    setChatName(getChatName(chat, currentUser.id));
+    setPicInfo(getProfilePic(chat, currentUser.id));
   };
 
   const handleBack = () => {
@@ -44,8 +40,9 @@ const HomePage = () => {
     <div className="h-vh flex sm:flex-row flex-col bg-base text-base-content h-full">
       {/* Chat List Sidebar */}
       <aside
-        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${selectedChat ? "hidden sm:flex" : "flex"
-          }`}
+        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${
+          selectedChat ? "hidden sm:flex" : "flex"
+        }`}
       >
         <div className="p-4 border-b border-base-300 font-bold text-lg bg-base-200">
           Chats
@@ -57,7 +54,7 @@ const HomePage = () => {
                 key={chat._id}
                 chat={chat}
                 currentUser={currentUser}
-                onClick={handleSelectChat}
+                onClick={() => handleSelectChat(chat)}
               />
             ))}
           </div>
@@ -66,8 +63,9 @@ const HomePage = () => {
 
       {/* Chat Area */}
       <main
-        className={`flex-1 flex flex-col ${selectedChat ? "flex" : "hidden sm:flex"
-          }`}
+        className={`flex-1 flex flex-col ${
+          selectedChat ? "flex" : "hidden sm:flex"
+        }`}
       >
         {/* Header */}
         <div className="p-4 border-b border-base-300 bg-base-200 flex items-center justify-between">
@@ -79,18 +77,17 @@ const HomePage = () => {
             >
               ⬅️
             </button>
-            <div className="chatbox-chatImage">
-              <img
-                className="rounded-full w-10 h-10"
-                src={PicInfo}
-              />
+            <div className="chatbox-chatImage w-[3rem] h-[3rem] rounded-full overflow-hidden">
+              <img src={PicInfo} />
             </div>
 
             <div className="font-semibold">
               {selectedChat ? chatName : "Select a chat"}
             </div>
           </div>
-          <div className="text-sm text-base-content/70">Online</div>
+          {selectedChat && !selectedChat.isGroupChat && (
+            <div className="text-sm text-base-content/70">Online</div>
+          )}
         </div>
 
         {/* Messages */}
