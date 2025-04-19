@@ -83,7 +83,8 @@ export default function UpdateProfile() {
           <div className="relative">
             <input
               type="text"
-              placeholder={name}
+              // placeholder="Name"
+              value={name}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition pr-10"
               {...register("name")}
               onChange={(e) => setName(e.target.value)}
@@ -112,7 +113,8 @@ export default function UpdateProfile() {
           <div>
             <input
               type="email"
-              placeholder={email}
+              // placeholder={email}
+              value={email}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
               {...register("email")}
               onChange={(e) => setEmail(e.target.value)}
@@ -138,7 +140,8 @@ export default function UpdateProfile() {
           {/* Bio */}
           <div>
             <textarea
-              placeholder={bio}
+              // placeholder={bio}
+              value={bio}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
               rows={4}
               {...register("bio")}
