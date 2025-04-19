@@ -21,7 +21,7 @@ export default function UpdateProfile() {
   } = useForm();
 
   // const [profilePic, setProfilePic] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(currentUser.authUser.user.profilePic);
 
   const { updateProfile } = useAuthStore();
 
@@ -63,7 +63,7 @@ export default function UpdateProfile() {
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
               <img
-                src={profilePic}
+                src={previewImage}
                 alt="Preview"
                 className="w-full h-full object-cover"
               />
