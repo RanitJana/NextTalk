@@ -3,6 +3,7 @@ import app from "./app.js";
 import connectDB from "./db/db.js";
 import { _env } from "./constant.js";
 import http from "http";
+import invokeSocket from "./socket.js";
 
 connectDB()
   .then(() => {
@@ -11,6 +12,8 @@ connectDB()
     const port = _env.PORT ?? 3000;
 
     const server = http.createServer(app);
+
+    invokeSocket(server);
 
     server.listen(port, () => {
       console.log(`Server started at port : ${port}\nhttp://localhost:${port}`);
