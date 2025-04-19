@@ -5,6 +5,7 @@ import {
   putContentMessage,
   putReactionMessage,
   putReadbyMessage,
+  getMessage
 } from "../controllers/message.controller.js";
 
 import upload from "../utils/multer.js";
@@ -34,6 +35,7 @@ const cpUpload = upload.fields([
   },
 ]);
 
+router.get("/:chatId",verify,getMessage);
 router.post("/", verify, cpUpload, postMessage);
 router.put("/content/:messageId", verify, putContentMessage);
 router.put("/reaction/:messageId", verify, putReactionMessage);
