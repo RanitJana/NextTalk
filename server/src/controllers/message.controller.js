@@ -8,7 +8,13 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const postMessage = AsyncHandler(async (req, res) => {
-  const { content, chat, replyTo } = req.body ?? {};
+  const { content, chat, replyTo = null } = req.body ?? {};
+
+  if ([content, chat].some((field) => !(field && field.toString().trim())))
+    return res.status(400).json({
+      success: false,
+      message: "content/chat is missing",
+    });
 
   const files = req.files;
   const attachments = [];
@@ -43,15 +49,18 @@ const postMessage = AsyncHandler(async (req, res) => {
 
   // console.log(attachments);
 
-  if ([content, chat].some((field) => !(field && field.toString().trim())))
-    return res.status(400).json({
-      success: false,
-      message: "content/chat is missing",
-    });
+  const newMessage = await messageSchema.create({
+    sender: req.user._id,
+    content,
+    chat,
+    attachments,
+    replyTo,
+  });
 
   return res.status(200).json({
     success: true,
     message: "added",
+    newMessage,
   });
 });
 
