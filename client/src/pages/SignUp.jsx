@@ -90,6 +90,7 @@ export default function SignupPage() {
                   className="hidden"
                   name="profilePic"
                   onChange={handleImageChange}
+                  name="profilePic"
                 />
               </div>
             </label>

@@ -4,19 +4,36 @@ import { useForm } from "react-hook-form";
 import { Upload, Image as ImageIcon, X } from "lucide-react";
 
 export default function UpdateProfile() {
+
+    const currentUser = useAuthStore();
+
+    console.log(currentUser.authUser.user);
+
+    const [name, setName] = useState(currentUser.authUser.user.name);
+    const [email, setEmail] = useState(currentUser.authUser.user.email);
+    const [bio, setBio] = useState(currentUser.authUser.user.bio);
+    const [profilePic, setProfilePic] = useState(currentUser.authUser.user.profilePic);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const [profilePic, setProfilePic] = useState(null);
+  // const [profilePic, setProfilePic] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
   const { updateProfile } = useAuthStore();
 
-  const onSubmit = (info) => {
-    const formData = { ...info, profilePic };
+  const onSubmit = () => {
+    const formData = { 
+      name,
+      email,
+      bio,
+      profilePic };
+
+    
+
     console.log(formData);
     updateProfile(formData);
   };
@@ -46,7 +63,7 @@ export default function UpdateProfile() {
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
               <img
-                src={previewImage}
+                src={profilePic}
                 alt="Preview"
                 className="w-full h-full object-cover"
               />
@@ -66,9 +83,11 @@ export default function UpdateProfile() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Name"
+              // placeholder="Name"
+              value={name}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition pr-10"
-              {...register("name", { required: true })}
+              {...register("name")}
+              onChange={(e) => setName(e.target.value)}
             />
             <label className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
               <div className="text-gray-400 hover:text-blue-600 transition">
@@ -85,22 +104,24 @@ export default function UpdateProfile() {
                 />
               </div>
             </label>
-            {errors.name && (
+            {/* {errors.name && (
               <p className="mt-1 text-sm text-red-600">Name is required</p>
-            )}
+            )} */}
           </div>
 
           {/* Email */}
           <div>
             <input
               type="email"
-              placeholder="Email"
+              // placeholder={email}
+              value={email}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              {...register("email", { required: true })}
+              {...register("email")}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && (
+            {/* {errors.email && (
               <p className="mt-1 text-sm text-red-600">Email is required</p>
-            )}
+            )} */}
           </div>
 
           {/* Password */}
@@ -116,16 +137,19 @@ export default function UpdateProfile() {
             )}
           </div> */}
 
+          {/* Bio */}
           <div>
             <textarea
-              placeholder="Short Bio"
+              // placeholder={bio}
+              value={bio}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
               rows={4}
-              {...register("bio", { required: true })}
+              {...register("bio")}
+              onChange={(e) => setBio(e.target.value)}
             ></textarea>
-            {errors.bio && (
+            {/* {errors.bio && (
               <p className="mt-1 text-sm text-red-600">Bio is required</p>
-            )}
+            )} */}
           </div>
 
           {/* Submit Button */}

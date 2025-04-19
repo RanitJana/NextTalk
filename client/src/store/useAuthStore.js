@@ -1,9 +1,6 @@
-import { create } from 'zustand';
-import { axiosInstance } from '../lib/axios.js';
-import toast from 'react-hot-toast';
-
-
-
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios.js";
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
@@ -11,68 +8,57 @@ export const useAuthStore = create((set, get) => ({
     isLoggingIn: false,
     isUpdatingProfile: false,
 
-
-
     isCheckingAuth: true,
 
     checkAuth: () => {
-
-        const localUser = localStorage.getItem('authUser');
+        const localUser = localStorage.getItem("authUser");
         if (localUser) {
             set({ authUser: JSON.parse(localUser), isCheckingAuth: false });
-        }
-        else {
+        } else {
             set({ isCheckingAuth: false });
         }
-
     },
 
     signup: async (data) => {
         set({ isSigningUp: true });
         try {
-            const res = await axiosInstance.post('/signup', data);
-            console.log('res in signup:', res.data);
+            const res = await axiosInstance.post("/signup", data);
+            console.log("res in signup:", res.data);
 
             set({ authUser: res.data });
-            localStorage.setItem('authUser', JSON.stringify(res.data));
+            localStorage.setItem("authUser", JSON.stringify(res.data));
             toast.success(res.data.message);
-
         } catch (error) {
             toast.error(error.response.data.message);
-            console.log('error in signup:', error);
-        }
-        finally {
+            console.log("error in signup:", error);
+        } finally {
             set({ isSigningUp: false });
         }
     },
 
     logout: async () => {
         try {
-            await axiosInstance.post('/logout');
+            await axiosInstance.post("/logout");
             set({ authUser: null });
-            toast.success('Logged out successfully');
+            toast.success("Logged out successfully");
         } catch (error) {
-            console.log('error in logout:', error);
+            console.log("error in logout:", error);
 
-            toast.error('An error occurred while logging out');
+            toast.error("An error occurred while logging out");
         }
     },
 
     login: async (data) => {
         set({ isLoggingIn: true });
         try {
-            const res = await axiosInstance.post('/login', data);
+            const res = await axiosInstance.post("/login", data);
             set({ authUser: res.data });
-            localStorage.setItem('authUser', JSON.stringify(res.data));
+            localStorage.setItem("authUser", JSON.stringify(res.data));
             toast.success(res.data.message);
-
-
         } catch (error) {
             toast.error(error.response.data.message);
-            console.log('error in login:', error);
-
-        }
-        finally {
+            console.log("error in login:", error);
+        } finally {
             set({ isLoggingIn: false });
         }
     },
@@ -80,11 +66,11 @@ export const useAuthStore = create((set, get) => ({
     logout: async () => {
         try {
             set({ authUser: null });
-            localStorage.removeItem('authUser');
-            toast.success('Logged out successfully');
+            localStorage.removeItem("authUser");
+            toast.success("Logged out successfully");
         } catch (error) {
-            console.log('error in logout:', error);
-            toast.error('An error occurred while logging out');
+            console.log("error in logout:", error);
+            toast.error("An error occurred while logging out");
         }
     },
 
@@ -100,17 +86,11 @@ export const useAuthStore = create((set, get) => ({
             }
 
             toast.success(res.data.message);
-
-
         } catch (error) {
             toast.error(error.response.data.message);
-            console.log('error in updateProfile:', error);
-
-        }
-        finally {
+            console.log("error in updateProfile:", error);
+        } finally {
             set({ isUpdatingProfile: false });
         }
-    }
-
-
+    },
 }));
