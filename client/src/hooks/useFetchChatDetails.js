@@ -28,6 +28,7 @@ export default function useFetchChatDetails(chat) {
       }
     })();
   }, [chat, currentUser._id, isGroupChat]);
+  // console.log(currentUser);
 
   return { ...chat, chatName, chatIcon };
 }

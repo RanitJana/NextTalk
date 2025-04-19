@@ -38,28 +38,28 @@ function App() {
     <div data-theme={theme} className="grid grid-rows-[4rem_1fr] h-dvh">
       <Navbar />
       <div className=" relative h-full w-full">
-      <Routes>
-        <Route
-          path="/"
-          element={authUser ? <HomePage /> : <Navigate to="/signup" />}
-        />
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUp /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={authUser ? <HomePage /> : <Navigate to="/signup" />}
+          />
+          <Route
+            path="/signup"
+            element={!authUser ? <SignUp /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+          />
 
-        <Route
-          path="/profile"
-          element={authUser ? <UpdateProfile /> : <Navigate to="/login" />}
-        />
+          <Route
+            path="/profile"
+            element={authUser ? <UpdateProfile /> : <Navigate to="/login" />}
+          />
 
-        <Route path="/settings" element={<SettingPage />} />
-        {/* <Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} /> */}
-      </Routes>
+          <Route path="/settings" element={<SettingPage />} />
+          {/* <Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} /> */}
+        </Routes>
       </div>
 
       <Toaster />
