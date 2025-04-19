@@ -16,8 +16,20 @@ const invokeSocket = (server) => {
   const userSockets = new Map(); //userid->socket.id
 
   io.on("connection", (socket) => {
-    console.log(socket.id);
+    let currUser = null;
+    socket.on("connect:user", ({ userId }) => {
+      currUser = userId;
+      userSockets.set(userId, socket.id);
+      io.emit("online:users", { users: Object.fromEntries(userSockets) });
+    });
+
+    socket.on("disconnect", () => {
+      userSockets.delete(currUser);
+      currUser = null;
+      io.emit("online:users", { users: Object.fromEntries(userSockets) });
+    });
   });
+  
 };
 
 export default invokeSocket;
