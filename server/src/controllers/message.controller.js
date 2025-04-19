@@ -1,5 +1,6 @@
 import AsyncHandler from "../utils/AsyncHandler.js";
 import messageSchema from "../models/message.model.js";
+import chatSchema from "../models/chat.model.js";
 import fs from "fs/promises";
 import { uploadFile } from "../utils/cloudinary.js";
 import path from "path";
@@ -144,4 +145,29 @@ const putReadbyMessage = AsyncHandler(async (req, res) => {
   });
 });
 
-export { postMessage, putContentMessage, putReactionMessage, putReadbyMessage };
+const getMessage = AsyncHandler(async (req, res) => {
+  const { chatId } = req.params ?? {};
+  if (!chatId)
+    return res.status(400).json({
+      success: false,
+      message: "Invalid chat id",
+    });
+
+  const allChats = await messageSchema
+    .find({ chat: chatId })
+    .populate("sender", "name profilePic email");
+
+  return res.status(200).json({
+    success: true,
+    message: "Obtained",
+    allChats,
+  });
+});
+
+export {
+  postMessage,
+  putContentMessage,
+  putReactionMessage,
+  putReadbyMessage,
+  getMessage,
+};
