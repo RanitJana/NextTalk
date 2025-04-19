@@ -6,11 +6,19 @@ const chats = [...Array(3)].map((_, i) => ({
   lastMessage: "Hey there!",
 }));
 
+const fetchChats = () => {
+
+}
+
+
+
 const HomePage = () => {
-  const [selectedChat, setSelectedChat] = useState(null);
+
+  const { selectedChat, setSelectedChat, chats, setChats, user } = ChatState();
 
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
+    // console.log("Selected chat:", selectedChat);
   };
 
   const handleBack = () => {
@@ -21,9 +29,8 @@ const HomePage = () => {
     <div className="h-vh flex sm:flex-row flex-col bg-base text-base-content h-full">
       {/* Chat List Sidebar */}
       <aside
-        className={`sm:w-1/4 md:w-1/5 border-r border-base-300 flex flex-col h-full ${
-          selectedChat ? "hidden sm:flex" : "flex"
-        }`}
+        className={`sm:w-1/4 md:w-1/5 border-r border-base-300 flex flex-col h-full ${selectedChat ? "hidden sm:flex" : "flex"
+          }`}
       >
         <div className="p-4 border-b border-base-300 font-bold text-lg bg-base-200">
           Chats
@@ -48,9 +55,8 @@ const HomePage = () => {
 
       {/* Chat Area */}
       <main
-        className={`flex-1 flex flex-col ${
-          selectedChat ? "flex" : "hidden sm:flex"
-        }`}
+        className={`flex-1 flex flex-col ${selectedChat ? "flex" : "hidden sm:flex"
+          }`}
       >
         {/* Header */}
         <div className="p-4 border-b border-base-300 bg-base-200 flex items-center justify-between">
@@ -62,6 +68,12 @@ const HomePage = () => {
             >
               ⬅️
             </button>
+            <div className="chatbox-chatImage">
+              {/* <img              
+                className="rounded-full w-10 h-10"
+                src={getSenderProfileImage(selectedChat, user )}
+              /> */}
+            </div>
             <div className="font-semibold">
               {selectedChat ? selectedChat.name : "Select a chat"}
             </div>
@@ -74,11 +86,10 @@ const HomePage = () => {
           {[...Array(5)].map((_, idx) => (
             <div
               key={idx}
-              className={`max-w-[70%] p-3 rounded-xl ${
-                idx % 2 === 0
-                  ? "bg-primary text-primary-content self-end ml-auto"
-                  : "bg-base-300 self-start"
-              }`}
+              className={`max-w-[70%] p-3 rounded-xl ${idx % 2 === 0
+                ? "bg-primary text-primary-content self-end ml-auto"
+                : "bg-base-300 self-start"
+                }`}
             >
               <p className="text-sm">Message {idx + 1}</p>
             </div>
