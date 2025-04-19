@@ -23,13 +23,16 @@ const invokeSocket = (server) => {
       io.emit("online:users", { users: Object.fromEntries(userSockets) });
     });
 
+    socket.on("message:send", (data) => {
+      console.log(data);
+    });
+
     socket.on("disconnect", () => {
       userSockets.delete(currUser);
       currUser = null;
       io.emit("online:users", { users: Object.fromEntries(userSockets) });
     });
   });
-  
 };
 
 export default invokeSocket;

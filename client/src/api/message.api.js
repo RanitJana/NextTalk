@@ -1,8 +1,8 @@
 import { axiosInstance } from "../lib/axios.js";
 
-const fetchChats = async () => {
+const fetchMessages = async (chatId) => {
   try {
-    const res = await axiosInstance.get("chat/");
+    const res = await axiosInstance.get("message/" + chatId);
     return res.data;
   } catch (error) {
     console.log(error);
@@ -10,4 +10,14 @@ const fetchChats = async () => {
   }
 };
 
-export { fetchChats };
+const postMessage = async (chat, content) => {
+  try {
+    const res = await axiosInstance.post("message/", { chat, content });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export { fetchMessages, postMessage };

@@ -4,6 +4,8 @@ import { useAuthStore } from "../store/useAuthStore.js";
 import ChatUser from "../components/ChatUser.jsx";
 import { getChatName, getProfilePic } from "../utils/chat.js";
 import ChatBox from "../components/ChatBox.jsx";
+import { socket } from "../socket.js";
+import { fetchMessages, postMessage } from "../api/message.api.js";
 
 const HomePage = () => {
   const currentUser = useAuthStore().authUser.user;
@@ -14,12 +16,30 @@ const HomePage = () => {
   const [PicInfo, setPicInfo] = useState(null);
   const [chatName, setChatName] = useState(null);
 
-  const handleSelectChat = (chat) => {
-    setSelectedChat(chat);
+  const [messages, setMessages] = useState(null);
 
+  const [text, setText] = useState("");
+
+  const handleGetMessages = useCallback(async (chatId) => {
+    const res = await fetchMessages(chatId);
+    if (res?.allChats) {
+      setMessages(res.allChats);
+    }
+  }, []);
+
+  const handleSelectChat = async (chat) => {
+    setSelectedChat(chat);
     setChatName(getChatName(chat, currentUser.id));
     setPicInfo(getProfilePic(chat, currentUser.id));
+    await handleGetMessages(chat._id);
   };
+
+  const handleSendMessage = useCallback(async () => {
+    if (!text.trim()) return;
+
+    socket.emit("message:send", { to: selectedChat._id.toString(), text });
+    await postMessage(selectedChat._id, text);
+  }, [text, selectedChat?._id]);
 
   const handleBack = () => {
     setSelectedChat(null);
@@ -91,17 +111,21 @@ const HomePage = () => {
         </div>
 
         {/* Messages */}
-        <ChatBox />
+        <ChatBox messages={messages} senderId={currentUser?._id} />
 
         {/* Input */}
         <div className="p-4 border-t border-base-300 bg-base-200">
           <div className="flex items-center gap-2">
             <input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               type="text"
               placeholder="Type a message"
               className="input input-bordered w-full"
             />
-            <button className="btn btn-primary">Send</button>
+            <button className="btn btn-primary" onClick={handleSendMessage}>
+              Send
+            </button>
           </div>
         </div>
       </main>
