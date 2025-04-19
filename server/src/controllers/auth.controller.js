@@ -2,6 +2,9 @@ import { cookieOptions } from "../constant.js";
 import User from "../models/user.model.js";
 import AsyncHandler from "../utils/AsyncHandler.js";
 import { fileURLToPath } from "url";
+import path from "path";
+import fs from "fs/promises";
+import { uploadFile } from "../utils/cloudinary.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -30,6 +33,8 @@ const registerUser = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const file = req.file;
 
+  console.log(file)
+
   if ([name, email, password].some((field) => !(field && field.trim()))) {
     return res.status(400).json({
       success: false,
@@ -37,6 +42,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     });
   }
 
+  let imageUrl = null;
   if (file) {
     const filePath = path.join(
       __dirname,
@@ -48,8 +54,8 @@ const registerUser = AsyncHandler(async (req, res) => {
         filePath,
         file.filename
       );
-
-      attachments.push({ url: uploadedFileInfo.url, fileType: key });
+      imageUrl = uploadedFileInfo.url;
+      // console.log(imageUrl)
     } catch (error) {
       console.log(error);
     } finally {
@@ -61,6 +67,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     name: name,
     email: email,
     password: password,
+    profilePic: imageUrl ?? "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   });
 
   if (!user) {
