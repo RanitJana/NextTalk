@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const chats = [...Array(20)].map((_, i) => ({
+const chats = [...Array(3)].map((_, i) => ({
   id: i,
   name: `User ${i + 1}`,
   lastMessage: "Hey there!",
