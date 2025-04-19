@@ -68,6 +68,8 @@ export default function SignupPage() {
                 className="w-full h-full object-cover"
               />
             </div>
+
+            { previewImage != "/defaultUser.jpg" && (
             <button
               type="button"
               onClick={removeImage}
@@ -75,6 +77,7 @@ export default function SignupPage() {
             >
               <X className="w-3 h-3 text-white" />
             </button>
+            )}
           </div>
         </div>
 
