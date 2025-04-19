@@ -16,8 +16,15 @@ export default function SignupPage() {
   const { signup } = useAuthStore();
 
   const onSubmit = (data) => {
-    const formData = { ...data, profilePic };
-    console.log(formData);
+    const formData = new FormData();
+
+    for (let key in data) {
+      formData.append(key, data[key]);
+    }
+    if (profilePic) {
+      formData.append("profilePic", profilePic);
+    }
+
     signup(formData);
   };
 
@@ -40,7 +47,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md p-8 rounded-xl shadow-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        
+
         {/* Centered Image Preview */}
         <div className="flex justify-center mb-6">
           <div className="relative">
@@ -81,7 +88,9 @@ export default function SignupPage() {
                   type="file"
                   accept="image/*"
                   className="hidden"
+                  name="profilePic"
                   onChange={handleImageChange}
+                  name="profilePic"
                 />
               </div>
             </label>
