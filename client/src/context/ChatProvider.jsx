@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/useAuthStore.js";
 
 const ChatContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useChatContext = () => {
   return useContext(ChatContext);
 };

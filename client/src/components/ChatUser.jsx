@@ -13,7 +13,10 @@ function ChatUser({ chat = {}, onClick }) {
         <img src={chatIcon} alt="" />
       </div>
       <div>
-        <p className="line-clamp-1 py-1">{chatName}</p>
+        <p className="line-clamp-1 py-1 font-bold">{chatName}</p>
+        <p className="line-clamp-1 text-sm">
+          {chat.latestMessage?.content ?? "Tap to chat"}
+        </p>
       </div>
     </div>
   );
