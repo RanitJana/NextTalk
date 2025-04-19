@@ -10,4 +10,10 @@ const _env = Object.freeze({
 
 const DB_NAME = "NextTalk";
 
-export { _env, DB_NAME };
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+};
+
+export { _env, DB_NAME, cookieOptions };

@@ -27,8 +27,10 @@ app.get("/", (req, res) => {
 
 import login from "./routes/login.route.js";
 import signup from "./routes/signup.route.js";
+import message from "./routes/message.route.js";
 
 app.use("/api/v1/login", login);
 app.use("/api/v1/signup", signup);
+app.use("/api/v1/message", message);
 
 export default app;
