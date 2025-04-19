@@ -1,6 +1,9 @@
 import { cookieOptions } from "../constant.js";
 import User from "../models/user.model.js";
 import AsyncHandler from "../utils/AsyncHandler.js";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -25,12 +28,33 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const registerUser = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
+  const file = req.file;
 
   if ([name, email, password].some((field) => !(field && field.trim()))) {
     return res.status(400).json({
       success: false,
       message: "All fields are required...",
     });
+  }
+
+  if (file) {
+    const filePath = path.join(
+      __dirname,
+      "../public/uploads/",
+      file.filename
+    );
+    try {
+      const uploadedFileInfo = await uploadFile(
+        filePath,
+        file.filename
+      );
+
+      attachments.push({ url: uploadedFileInfo.url, fileType: key });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      await fs.unlink(filePath);
+    }
   }
 
   const user = await User.create({
