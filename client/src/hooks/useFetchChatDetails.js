@@ -7,7 +7,7 @@ export default function useFetchChatDetails(chat) {
   const isGroupChat = chat.isGroupChat;
 
   const [chatName, setChatName] = useState("");
-  const [chatIcon, setChatIcon] = useState("");
+  const [chatIcon, setChatIcon] = useState(null);
 
   useEffect(() => {
     (() => {
