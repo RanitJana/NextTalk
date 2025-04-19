@@ -87,7 +87,7 @@ export const useAuthStore = create((set, get) => ({
             set({ authUser: res.data });
             localStorage.setItem("authUser", JSON.stringify(res.data));
 
-            toast.success(res.data.message);
+            toast.success("Profile updated successfully");
         } catch (error) {
             toast.error(error.response.data.message);
             console.log("error in updateProfile:", error);
