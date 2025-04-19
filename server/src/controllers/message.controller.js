@@ -64,4 +64,33 @@ const postMessage = AsyncHandler(async (req, res) => {
   });
 });
 
-export { postMessage };
+const putContentMessage = AsyncHandler(async (req, res) => {
+  const { content } = req.body ?? {};
+
+  if (!content)
+    return res.status(400).json({
+      success: false,
+      message: "Content is empty",
+    });
+
+  const { messageId } = req.params;
+
+  if (!messageId)
+    return res.status(400).json({
+      success: false,
+      message: "Invalid message",
+    });
+
+  const updatedMessage = await messageSchema.findById(messageId);
+  updatedMessage.content = content;
+
+  await updatedMessage.save({ validateBeforeSave: false });
+
+  return res.status(200).json({
+    success: true,
+    message: "Message updated",
+    updatedMessage,
+  });
+});
+
+export { postMessage, putContentMessage };

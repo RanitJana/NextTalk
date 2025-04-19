@@ -1,6 +1,6 @@
 import express from "express";
 import verify from "../middlewares/verify.middleware.js";
-import { postMessage } from "../controllers/message.controller.js";
+import { postMessage, putContentMessage } from "../controllers/message.controller.js";
 
 import upload from "../utils/multer.js";
 
@@ -30,5 +30,6 @@ const cpUpload = upload.fields([
 ]);
 
 router.post("/", verify, cpUpload, postMessage);
+router.put("/content/:messageId", verify, putContentMessage);
 
 export default router;
