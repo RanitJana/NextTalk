@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function SignupPage() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [image, setImage] = useState(null);
 
   const onSubmit = (data) => {
@@ -27,7 +31,9 @@ export default function SignupPage() {
               className="w-full px-4 py-2 border rounded-md"
               {...register("name", { required: true })}
             />
-            {errors.name && <p className="text-red-500 text-sm">Name is required</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">Name is required</p>
+            )}
           </div>
 
           <div>
@@ -37,7 +43,9 @@ export default function SignupPage() {
               className="w-full px-4 py-2 border rounded-md"
               {...register("email", { required: true })}
             />
-            {errors.email && <p className="text-red-500 text-sm">Email is required</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">Email is required</p>
+            )}
           </div>
 
           <div>
@@ -47,7 +55,9 @@ export default function SignupPage() {
               className="w-full px-4 py-2 border rounded-md"
               {...register("password", { required: true })}
             />
-            {errors.password && <p className="text-red-500 text-sm">Password is required</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">Password is required</p>
+            )}
           </div>
 
           <div>
@@ -57,7 +67,9 @@ export default function SignupPage() {
               rows={4}
               {...register("bio", { required: true })}
             ></textarea>
-            {errors.bio && <p className="text-red-500 text-sm">Bio is required</p>}
+            {errors.bio && (
+              <p className="text-red-500 text-sm">Bio is required</p>
+            )}
           </div>
 
           <div>

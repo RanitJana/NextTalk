@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const LogIn = () => {
-    return (
-        <div className='bg-white'>LogIn</div>
-    )
-}
+  return <div className="bg-white">LogIn</div>;
+};
 
-export default LogIn
+export default LogIn;

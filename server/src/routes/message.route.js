@@ -4,6 +4,7 @@ import {
   postMessage,
   putContentMessage,
   putReactionMessage,
+  putReadbyMessage,
 } from "../controllers/message.controller.js";
 
 import upload from "../utils/multer.js";
