@@ -24,7 +24,8 @@ const invokeSocket = (server) => {
     });
 
     socket.on("message:send", (data) => {
-      console.log(data);
+      socket.to(userSockets.get(data.to)).emit("message:receive", data);
+      // console.log(data);
     });
 
     socket.on("disconnect", () => {

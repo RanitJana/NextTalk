@@ -1,12 +1,11 @@
 import React from "react";
 
-const ChatBox = ({ messages = [], senderId }) => {
+const ChatBox = ({ messages = [], myId }) => {
   return (
     <div className="relative w-full h-full overflow-y-auto">
       <div className=" absolute top-0 left-0 he-full w-full flex-1 overflow-y-auto p-4 space-y-2 bg-base-100">
         {messages?.map((message, idx) => {
-          const ownMessage =
-            message.sender._id.toString() == senderId.toString();
+          const ownMessage = message.sender._id.toString() == myId.toString();
           return (
             <div
               key={idx}

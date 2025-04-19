@@ -28,18 +28,47 @@ const HomePage = () => {
   }, []);
 
   const handleSelectChat = async (chat) => {
+    console.log(chat);
+
     setSelectedChat(chat);
-    setChatName(getChatName(chat, currentUser.id));
-    setPicInfo(getProfilePic(chat, currentUser.id));
+    setChatName(getChatName(chat, currentUser._id));
+    setPicInfo(getProfilePic(chat, currentUser._id));
     await handleGetMessages(chat._id);
   };
+
+  useEffect(() => {
+    const handleReceiveMessage = (data) => {
+      console.log(data);
+
+      setMessages((prev) => [
+        ...prev,
+        { sender: { ...data.sender, content: data.text } },
+      ]);
+    };
+    socket.on("message:receive", handleReceiveMessage);
+    return () => socket.off("message:receive", handleReceiveMessage);
+  }, []);
 
   const handleSendMessage = useCallback(async () => {
     if (!text.trim()) return;
 
-    socket.emit("message:send", { to: selectedChat._id.toString(), text });
+    socket.emit("message:send", {
+      to: selectedChat._id.toString(),
+      text,
+      sender: {
+        _id: currentUser?._id,
+        name: currentUser?.name,
+        profilePic: currentUser?.profilePic,
+      },
+    });
     await postMessage(selectedChat._id, text);
-  }, [text, selectedChat?._id]);
+  }, [
+    text,
+    selectedChat?._id,
+    currentUser?._id,
+    currentUser?.name,
+    currentUser?.profilePic,
+  ]);
 
   const handleBack = () => {
     setSelectedChat(null);
@@ -111,7 +140,7 @@ const HomePage = () => {
         </div>
 
         {/* Messages */}
-        <ChatBox messages={messages} senderId={currentUser?._id} />
+        <ChatBox messages={messages} myId={currentUser?._id} />
 
         {/* Input */}
         <div className="p-4 border-t border-base-300 bg-base-200">
