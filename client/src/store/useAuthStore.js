@@ -91,9 +91,17 @@ export const useAuthStore = create((set, get) => ({
     updateProfile: async (data) => {
         set({ isUpdatingProfile: true });
         try {
-            const res = await axiosInstance.post('/updateProfile', data);
-            set({ authUser: res.data });
-            localStorage.setItem('authUser', JSON.stringify(res.data));
+
+            const res = null;
+            if (!data.info) {
+                res = await axiosInstance.put('/user/info', data.info);
+            }
+            if (data.profilePic) {
+                const formData = new FormData();
+                formData.append('profilePic', data.profilePic);
+                res = await axiosInstance.put('/user/avatar', formData);
+            }
+
             toast.success(res.data.message);
 
 

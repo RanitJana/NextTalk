@@ -13,12 +13,12 @@ export default function UpdateProfile() {
   const [profilePic, setProfilePic] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
-  const { signup } = useAuthStore();
+  const { updateProfile } = useAuthStore();
 
-  const onSubmit = (data) => {
-    const formData = { ...data, profilePic };
+  const onSubmit = (info) => {
+    const formData = { ...info, profilePic };
     console.log(formData);
-    // signup(formData);
+    updateProfile(formData);
   };
 
   const handleImageChange = (e) => {
@@ -40,7 +40,7 @@ export default function UpdateProfile() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md p-8 rounded-xl shadow-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Profile Update</h2>
-        
+
         {/* Centered Image Preview */}
         <div className="flex justify-center mb-6">
           <div className="relative">
@@ -91,7 +91,7 @@ export default function UpdateProfile() {
           </div>
 
           {/* Email */}
-          {/* <div>
+          <div>
             <input
               type="email"
               placeholder="Email"
@@ -101,7 +101,7 @@ export default function UpdateProfile() {
             {errors.email && (
               <p className="mt-1 text-sm text-red-600">Email is required</p>
             )}
-          </div> */}
+          </div>
 
           {/* Password */}
           {/* <div>
@@ -116,7 +116,7 @@ export default function UpdateProfile() {
             )}
           </div> */}
 
-            <div>
+          <div>
             <textarea
               placeholder="Short Bio"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
