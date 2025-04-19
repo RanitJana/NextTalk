@@ -28,8 +28,7 @@ const HomePage = () => {
   }, []);
 
   const handleSelectChat = async (chat) => {
-    console.log(chat);
-
+    socket.emit("connect:room", { users: chat.users, room: chat._id });
     setSelectedChat(chat);
     setChatName(getChatName(chat, currentUser._id));
     setPicInfo(getProfilePic(chat, currentUser._id));
@@ -42,7 +41,7 @@ const HomePage = () => {
 
       setMessages((prev) => [
         ...prev,
-        { sender: { ...data.sender, content: data.text } },
+        { sender: data.sender, content: data.text },
       ]);
     };
     socket.on("message:receive", handleReceiveMessage);

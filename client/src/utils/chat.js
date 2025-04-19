@@ -1,6 +1,4 @@
 const getProfilePic = (chat, userId) => {
-  console.log(userId);
-  
   if (chat.isGroupChat) return chat.groupIcon;
 
   const firstUser = chat.users[0],
