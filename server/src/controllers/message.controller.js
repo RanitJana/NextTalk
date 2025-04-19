@@ -135,4 +135,13 @@ const putReactionMessage = AsyncHandler(async (req, res) => {
   });
 });
 
-export { postMessage, putContentMessage, putReactionMessage };
+const putReadbyMessage = AsyncHandler(async (req, res) => {
+  const {} = req.body;
+
+  return res.status(200).json({
+    success: true,
+    message: "done",
+  });
+});
+
+export { postMessage, putContentMessage, putReactionMessage, putReadbyMessage };
