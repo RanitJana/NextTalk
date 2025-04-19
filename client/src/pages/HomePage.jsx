@@ -44,11 +44,11 @@ const HomePage = () => {
           selectedChat ? "hidden sm:flex" : "flex"
         }`}
       >
-        <div className="p-4 border-b border-base-300 font-bold text-lg bg-base-200">
+        <div className="p-4 py-[1.63rem] flex items-center border-b border-base-300 font-bold text-lg bg-base-200">
           Chats
         </div>
         <div className="relative h-full">
-          <div className="overflow-y-auto h-full w-full flex-1 absolute left-0 top-0">
+          <div className="overflow-y-auto h-full w-full flex-1 absolute left-0 top-0 pt-2">
             {chats.map((chat) => (
               <ChatUser
                 key={chat._id}
