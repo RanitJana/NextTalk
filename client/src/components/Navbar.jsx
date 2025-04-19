@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, MessageSquare, Settings, User, Search, Menu } from "lucide-react";
 
 const Navbar = () => {
@@ -8,19 +8,61 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
+  // Mock search function - replace with your actual search API call
   const handleSearch = (e) => {
     e.preventDefault();
-    // Handle search functionality
-    console.log("Searching for:", searchQuery);
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    
+    // Mock results - replace with your actual search logic
+    // const mockResults = [
+    //   { id: 1, title: "Conversation about React", type: "chat", preview: "We were discussing React hooks..." },
+    //   { id: 2, title: "User: John Doe", type: "user", username: "johndoe" },
+    //   { id: 3, title: "Group: Developers", type: "group", members: 24 },
+    // ].filter(item => 
+    //   item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    // );
+    
+    // setSearchResults(mockResults.slice(0, 3)); // Limit to 3 results
   };
 
   // Close mobile menu when route changes
   useEffect(() => {
     setShowMobileMenu(false);
     setShowMobileSearch(false);
+    setSearchResults([
+
+      // { id: 1, title: "Conversation about React", type: "chat", preview: "We were discussing React hooks..." },
+      // { id: 2, title: "User: John Doe", type: "user", username: "johndoe" },
+      // { id: 3, title: "Group: Developers", type: "group", members: 24 },
+
+    ]);
   }, [location]);
+
+  const handleResultClick = (result) => {
+    // Handle navigation based on result type
+    switch(result.type) {
+      case 'chat':
+        navigate(`/chat/${result.id}`);
+        break;
+      case 'user':
+        navigate(`/profile/${result.username}`);
+        break;
+      case 'group':
+        navigate(`/group/${result.id}`);
+        break;
+      default:
+        break;
+    }
+    setSearchQuery("");
+    setSearchResults([]);
+  };
 
   return (
     <header className="bg-base-100 border-b border-base-300 w-full top-0 z-40 bg-base-100/90 backdrop-blur-sm">
@@ -48,17 +90,46 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-md mx-4">
+          {/* Desktop Search Bar with Results */}
+          <div className="hidden md:flex flex-1 max-w-md mx-4 relative">
             <form onSubmit={handleSearch} className="w-full relative">
               <input
                 type="text"
-                placeholder="Search messages..."
+                placeholder="Search messages, users, groups..."
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery && handleSearch({ preventDefault: () => {} })}
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              
+              {/* Search Results Dropdown */}
+              {searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50">
+                  <div className="py-1 max-h-60 overflow-y-auto">
+                    {searchResults.map((result) => (
+                      <div
+                        key={result.id}
+                        className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors"
+                        onClick={() => handleResultClick(result)}
+                      >
+                        <div className="font-medium">{result.title}</div>
+                        {result.preview && (
+                          <div className="text-xs text-base-content/70 truncate">
+                            {result.preview}
+                          </div>
+                        )}
+                        {result.type === 'user' && (
+                          <div className="text-xs text-base-content/70">User profile</div>
+                        )}
+                        {result.type === 'group' && (
+                          <div className="text-xs text-base-content/70">{result.members} members</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </form>
           </div>
 
@@ -93,19 +164,48 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Search Bar */}
+        {/* Mobile Search Bar with Results */}
         {showMobileSearch && (
-          <div className="md:hidden py-2 px-2 bg-base-100">
-            <form onSubmit={handleSearch} className="w-full relative">
+          <div className="md:hidden bg-base-100 relative">
+            <form onSubmit={handleSearch} className="w-full relative px-2 py-2">
               <input
                 type="text"
-                placeholder="Search messages..."
+                placeholder="Search messages, users, groups..."
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery && handleSearch({ preventDefault: () => {} })}
                 autoFocus
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              
+              {/* Mobile Search Results */}
+              {searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-base-100 border-t border-base-300 shadow-lg z-50">
+                  <div className="py-1 max-h-60 overflow-y-auto">
+                    {searchResults.map((result) => (
+                      <div
+                        key={result.id}
+                        className="px-4 py-3 hover:bg-base-200 cursor-pointer transition-colors"
+                        onClick={() => handleResultClick(result)}
+                      >
+                        <div className="font-medium">{result.title}</div>
+                        {result.preview && (
+                          <div className="text-sm text-base-content/70 truncate">
+                            {result.preview}
+                          </div>
+                        )}
+                        {result.type === 'user' && (
+                          <div className="text-sm text-base-content/70">User profile</div>
+                        )}
+                        {result.type === 'group' && (
+                          <div className="text-sm text-base-content/70">{result.members} members</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </form>
           </div>
         )}
