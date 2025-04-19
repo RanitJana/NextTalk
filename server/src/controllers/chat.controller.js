@@ -1,5 +1,5 @@
-import { User } from "../models/user.model.js";
-import { Chat } from "../models/chat.model.js";
+import User from "../models/user.model.js";
+import Chat from "../models/chat.model.js";
 import AsyncHandler from "../utils/AsyncHandler.js";
 
 const createOneToOneChat = AsyncHandler(async (req, res) => {
