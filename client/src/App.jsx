@@ -37,7 +37,7 @@ function App() {
   return (
     <div data-theme={theme} className="grid grid-rows-[4rem_1fr] h-dvh">
       <Navbar />
-      <div className="">
+      <div className=" relative h-full w-full">
       <Routes>
         <Route
           path="/"
