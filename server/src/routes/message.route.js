@@ -36,5 +36,6 @@ const cpUpload = upload.fields([
 router.post("/", verify, cpUpload, postMessage);
 router.put("/content/:messageId", verify, putContentMessage);
 router.put("/reaction/:messageId", verify, putReactionMessage);
+router.put("/readby/:messageId", verify, putReadbyMessage);
 
 export default router;
