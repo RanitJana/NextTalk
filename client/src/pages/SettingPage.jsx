@@ -12,15 +12,15 @@ const SettingPage = () => {
   const { theme, setTheme } = useThemeStore();
 
   return (
-    <div className="h-screen container mx-auto px-4 pt-20 max-w-5xl">
-      <div className="space-y-6">
+    <div className="h-full w-dvw overflow-y-scroll container relative mx-auto px-4 max-w-5xl">
+      <div className="space-y-6 p-6 absolute top-0 left-0 w-full h-full">
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
           <p className="text-sm text-base-content/70">
             Choose a theme for youe chat interface
           </p>
         </div>
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 w-full">
           {THEMES.map((t) => (
             <button
               key={t}
@@ -106,6 +106,7 @@ const SettingPage = () => {
             </div>
           </div>
         </div>
+        <div className="h-2"></div>
       </div>
     </div>
   );

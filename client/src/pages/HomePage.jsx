@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const chats = [...Array(10)].map((_, i) => ({
+const chats = [...Array(20)].map((_, i) => ({
   id: i,
   name: `User ${i + 1}`,
   lastMessage: "Hey there!",
@@ -18,35 +18,39 @@ const HomePage = () => {
   };
 
   return (
-    <div className="h-screen flex sm:flex-row flex-col bg-base text-base-content">
+    <div className="h-vh flex sm:flex-row flex-col bg-base text-base-content h-full">
       {/* Chat List Sidebar */}
       <aside
-        className={`sm:w-1/4 md:w-1/5 border-r border-base-300 flex flex-col ${selectedChat ? "hidden sm:flex" : "flex"
-          }`}
+        className={`sm:w-1/4 md:w-1/5 border-r border-base-300 flex flex-col h-full ${
+          selectedChat ? "hidden sm:flex" : "flex"
+        }`}
       >
         <div className="p-4 border-b border-base-300 font-bold text-lg bg-base-200">
           Chats
         </div>
-        <div className="overflow-y-auto flex-1">
-          {chats.map((chat) => (
-            <div
-              key={chat.id}
-              className="p-4 hover:bg-base-200 cursor-pointer border-b border-base-300"
-              onClick={() => handleSelectChat(chat)}
-            >
-              <div className="font-semibold">{chat.name}</div>
-              <div className="text-sm text-base-content/70">
-                {chat.lastMessage}
+        <div className="relative h-full">
+          <div className="overflow-y-auto h-full w-full flex-1 absolute left-0 top-0">
+            {chats.map((chat) => (
+              <div
+                key={chat.id}
+                className="p-4 hover:bg-base-200 cursor-pointer border-b border-base-300"
+                onClick={() => handleSelectChat(chat)}
+              >
+                <div className="font-semibold">{chat.name}</div>
+                <div className="text-sm text-base-content/70">
+                  {chat.lastMessage}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </aside>
 
       {/* Chat Area */}
       <main
-        className={`flex-1 flex flex-col ${selectedChat ? "flex" : "hidden sm:flex"
-          }`}
+        className={`flex-1 flex flex-col ${
+          selectedChat ? "flex" : "hidden sm:flex"
+        }`}
       >
         {/* Header */}
         <div className="p-4 border-b border-base-300 bg-base-200 flex items-center justify-between">
@@ -70,10 +74,11 @@ const HomePage = () => {
           {[...Array(5)].map((_, idx) => (
             <div
               key={idx}
-              className={`max-w-[70%] p-3 rounded-xl ${idx % 2 === 0
-                ? "bg-primary text-primary-content self-end ml-auto"
-                : "bg-base-300 self-start"
-                }`}
+              className={`max-w-[70%] p-3 rounded-xl ${
+                idx % 2 === 0
+                  ? "bg-primary text-primary-content self-end ml-auto"
+                  : "bg-base-300 self-start"
+              }`}
             >
               <p className="text-sm">Message {idx + 1}</p>
             </div>
@@ -97,5 +102,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
