@@ -65,4 +65,36 @@ const putAvatar = AsyncHandler(async (req, res) => {
   });
 });
 
-export { putAvatar };
+const putInfo = AsyncHandler(async (req, res) => {
+  const { name, email, bio } = req.body ?? {};
+
+  if ([name, email, bio].some((field) => !(field && field.trim())))
+    return res.status(400).json({
+      success: false,
+      message: "Inputs must be filled",
+    });
+
+  const anotherUser = await userSchema.findOne({
+    email: { $eq: email, $ne: req.user.email },
+  });
+
+  if (anotherUser)
+    return res.status(400).json({
+      success: false,
+      message: "Anoter user already exits by this email",
+    });
+
+  const user = req.user;
+
+  user.email = email;
+  user.name = name;
+  user.bio = bio;
+
+  await user.save({ validateBeforeSave: false });
+  return res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+  });
+});
+
+export { putAvatar, putInfo };

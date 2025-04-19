@@ -6,6 +6,9 @@ import path from "path";
 import fs from "fs/promises";
 import { uploadFile } from "../utils/cloudinary.js";
 
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const createOneToOneChat = AsyncHandler(async (req, res) => {
   /*
    * step#1: verifyJWT->  middleware
@@ -111,7 +114,6 @@ const createGroupChat = AsyncHandler(async (req, res) => {
    * step#4: return new groupChat
    */
 
-  // step#1: take input : group name , users and groupIcon(if available)
   const { users, groupName } = req.body;
   const file = req.file;
   console.log("file: ", file);
@@ -130,7 +132,7 @@ const createGroupChat = AsyncHandler(async (req, res) => {
         file.filename
       );
       groupIconUrl = uploadedFileInfo.url;
-      console.log(groupIconUrl)
+      // console.log(groupIconUrl)
     } catch (error) {
       console.log(error);
     } finally {
@@ -203,13 +205,24 @@ const addToGroup = AsyncHandler(async (req, res) => {
   }
 
   const chat = await Chat.findById(chatId);
-  if (chat?.groupAdmin != req.user._id) {
+  // if (chat?.groupAdmin != req.user._id) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: "Only group admin can add user to group",
+  //   });
+  // }
+
+
+  if (
+    !chat.groupAdmin?.some((adminId) =>
+      adminId.toString() == req.user._id.toString()
+    )
+  ) {
     return res.status(400).json({
       success: false,
       message: "Only group admin can add user to group",
     });
   }
-
   const addUserUpdatedChat = await Chat.findByIdAndUpdate(
     chatId,
     {
@@ -247,6 +260,19 @@ const removeFromGroup = AsyncHandler(async (req, res) => {
     return res.status(400).json({
       success: false,
       message: "All fields are required.",
+    });
+  }
+
+
+  const chat = await Chat.findById(chatId);
+  if (
+    !chat.groupAdmin?.some((adminId) =>
+      adminId.toString() == req.user._id.toString()
+    )
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Only group admin can remove user from group",
     });
   }
 
