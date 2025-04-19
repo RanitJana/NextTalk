@@ -4,10 +4,34 @@ import AsyncHandler from "../utils/AsyncHandler.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs/promises";
-import { uploadFile } from "../utils/cloudinary.js";
+import { deleteFile, uploadFile } from "../utils/cloudinary.js";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+
+function extractCloudinaryPublicId(url) {
+  try {
+    const uploadIndex = url.indexOf("/upload/");
+    if (uploadIndex === -1) return null;
+
+    const pathAfterUpload = url.substring(uploadIndex + 8); // skip "/upload/"
+    const parts = pathAfterUpload.split("/");
+
+    // Remove version part if it matches 'v123456...'
+    if (/^v\d+$/.test(parts[0])) {
+      parts.shift();
+    }
+
+    const fullFilename = parts.pop(); // get last part
+    const publicId = fullFilename.substring(0, fullFilename.lastIndexOf(".")); // remove only final extension
+
+    return [...parts, publicId].join("/");
+  } catch (err) {
+    console.error("Error extracting Cloudinary public ID:", err);
+    return null;
+  }
+}
 
 const createOneToOneChat = AsyncHandler(async (req, res) => {
   /*
@@ -301,10 +325,211 @@ const removeFromGroup = AsyncHandler(async (req, res) => {
   });
 });
 
+const renameGroup = AsyncHandler(async (req, res) => {
+  /*
+   * step#1: take input chatId and group name
+   * step#2: find the chat and update, populate..., and send
+   */
+
+  const { chatId, newGroupName } = req.body;
+
+  if ([chatId, newGroupName].some((field) => field?.trim() === "")) {
+    return res.status(400).json({
+      success: false,
+      message: "A selected chat and group name is required",
+    });
+  }
+
+  const chat = await Chat.findById(chatId);
+  if (
+    !chat.groupAdmin?.some((adminId) =>
+      adminId.toString() == req.user._id.toString()
+    )
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Only group admin can rename group",
+    });
+  }
+
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      chatName: newGroupName,
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+  if (!updatedChat) {
+    return res.status(400).json({
+      success: false,
+      message: `GroupChat name not updated `,
+    });
+  }
+
+  return res.status(201).json({
+    success: true,
+    message: "Group name updated successfully",
+    chat: updatedChat,
+  });
+});
+
+const updateGroupIcon = AsyncHandler(async (req, res) => {
+  const { chatId } = req.body;
+  const file = req.file;
+
+  // console.log("file: ", file);
+
+  const chat = await Chat.findById(chatId);
+
+  // check for group admin
+  if (!chat.groupAdmin?.some((adminId) => adminId.toString() == req.user._id.toString())) {
+    return res.status(400).json({
+      success: false,
+      message: "Only group admin can update group Icon",
+    });
+  }
+
+  // check for file
+  if (!file) {
+    return res.status(400).json({
+      success: false,
+      message: "Photo not found",
+    });
+  }
+
+  // upload photo in cloudinary
+  let imageUrl = null;
+  if (file) {
+    const filePath = path.join(
+      __dirname,
+      "../public/uploads/",
+      file.filename
+    );
+    try {
+      const uploadedFileInfo = await uploadFile(
+        filePath,
+        file.filename
+      );
+      imageUrl = uploadedFileInfo.url;
+      console.log(imageUrl)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      await fs.unlink(filePath);
+    }
+  }
+
+  if (!imageUrl) {
+    return res.status(400).json({
+      success: false,
+      message: "Image not uploaded",
+    });
+  }
+
+  // delete previous image from cloudinary
+  const prevPic = chat.groupIcon;
+  if (prevPic && prevPic !== "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg") {
+    let prevPicPublicId = extractCloudinaryPublicId(prevPic);
+
+    const deletePrevPic = await deleteFile(prevPicPublicId);
+    if (!deletePrevPic) {
+      return res.status(400).json({
+        success: false,
+        message: "Previous image not deleted",
+      });
+    }
+  }
+
+  // update group icon
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      groupIcon: imageUrl,
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+  if (!updatedChat) {
+    return res.status(400).json({
+      success: false,
+      message: `GroupChat icon not updated `,
+    });
+  }
+  return res.status(201).json({
+    success: true,
+    message: "Group Icon updated successfully",
+    chat: updatedChat,
+  });
+});
+
+const deleteGroupIcon = AsyncHandler(async (req, res) => {
+  const { chatId } = req.body;
+
+  const chat = await Chat.findById(chatId);
+
+  // check for group admin
+  if (!chat.groupAdmin?.some((adminId) => adminId.toString() == req.user._id.toString())) {
+    return res.status(400).json({
+      success: false,
+      message: "Only group admin can update group Icon",
+    });
+  }
+
+  // delete previous image from cloudinary
+  const prevPic = chat.groupIcon;
+  if (prevPic && prevPic !== "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg") {
+    let prevPicPublicId = extractCloudinaryPublicId(prevPic);
+
+    const deletePrevPic = await deleteFile(prevPicPublicId);
+    if (!deletePrevPic) {
+      return res.status(400).json({
+        success: false,
+        message: "Previous image not deleted",
+      });
+    }
+  }
+  const imageUrl = "https://res.cloudinary.com/du4bs9xd2/image/upload/v1742054125/default-group-image_szgp67.jpg";
+
+  // update group icon
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      groupIcon: imageUrl,
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+  if (!updatedChat) {
+    return res.status(400).json({
+      success: false,
+      message: `GroupChat icon removal failed `,
+    });
+  }
+  return res.status(201).json({
+    success: true,
+    message: "Group Icon removed successfully",
+    chat: updatedChat,
+  });
+});
+
 export {
   createOneToOneChat,
   fetchAllChats,
   createGroupChat,
   addToGroup,
   removeFromGroup,
+  renameGroup,
+  updateGroupIcon,
+  deleteGroupIcon
+
 };
