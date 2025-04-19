@@ -1,6 +1,6 @@
 import express from 'express';
 import verify from '../middlewares/verify.middleware.js';
-import { addToGroup, createGroupChat, createOneToOneChat, fetchAllChats, removeFromGroup } from '../controllers/chat.controller.js';
+import { addToGroup, createGroupChat, createOneToOneChat, deleteGroupIcon, fetchAllChats, removeFromGroup, renameGroup, updateGroupIcon } from '../controllers/chat.controller.js';
 import upload from '../utils/multer.js';
 
 const router = express.Router();
@@ -10,8 +10,9 @@ router.route("/oneToOneChat").post(verify, createOneToOneChat);                 
 router.route("/group").post(verify, upload.single("groupIcon"), createGroupChat);                           // create group chat
 router.route("/groupadd").put(verify, addToGroup);                              // add user to group             
 router.route("/groupremove").put(verify, removeFromGroup);                      // remove user from group
-
-
+router.route("/renameGroup").put(verify, renameGroup);                          // rename group
+router.route("/updateGroupIcon").put(verify, upload.single("groupIcon"), updateGroupIcon); // update group icon
+router.route("/deleteGroupIcon").put(verify, deleteGroupIcon);                  // delete group icon
 
 
 export default router;
