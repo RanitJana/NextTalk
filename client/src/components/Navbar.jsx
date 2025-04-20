@@ -11,6 +11,7 @@ import {
   Search,
   Menu,
 } from "lucide-react";
+import { useChatContext } from "../context/ChatProvider.jsx";
 
 const Navbar = () => {
 
@@ -22,6 +23,8 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, selectedChat, setSelectedChat } = useChatContext();
+
 
   // Mock search function - replace with your actual search API call
   const handleSearch = async (e) => {
@@ -32,34 +35,17 @@ const Navbar = () => {
     }
 
     try {
-      const users = await getSearchResults(searchQuery);
+      const response = await getSearchResults(searchQuery);
 
-      if (users && users.length > 0) {
-        const formatted = users.map((user) => ({
-          id: user._id,
-          _id: user._id,
-          name: user.name,
-          profilePic: user.profilePic,
-          type: "user",
-        }));
+      console.log(response);
 
-        setSearchResults(formatted);
-
-      }
+      setSearchResults(response.users)
+      setSearchQuery(null)
     } catch (error) {
       console.error("Search failed", error);
     }
 
-    // Mock results - replace with your actual search logic
-    // const mockResults = [
-    //   { id: 1, title: "Conversation about React", type: "chat", preview: "We were discussing React hooks..." },
-    //   { id: 2, title: "User: John Doe", type: "user", username: "johndoe" },
-    //   { id: 3, title: "Group: Developers", type: "group", members: 24 },
-    // ].filter(item =>
-    //   item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    // );
 
-    // setSearchResults(mockResults.slice(0, 3)); // Limit to 3 results
   };
 
   // Close mobile menu when route changes
@@ -75,10 +61,11 @@ const Navbar = () => {
 
     if (result.type === "user") {
       try {
-        const chat = await createOneToOneChat(result._id); // Assuming result._id is userId
-        if (chat) {
-          navigate(`/chat/${chat._id}`);
-        }
+        setSelectedChat(result)
+        // const chat = await createOneToOneChat(result._id); // Assuming result._id is userId
+        // if (chat) {
+        //   navigate(`/chat/${chat._id}`);
+        // }
       } catch (error) {
         console.error("Failed to create chat:", error);
       }

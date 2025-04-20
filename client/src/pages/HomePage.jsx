@@ -7,11 +7,11 @@ import ChatBox from "../components/ChatBox.jsx";
 import { socket } from "../socket.js";
 import { fetchMessages, postMessage } from "../api/message.api.js";
 import { ArrowLeft } from "lucide-react";
+import { useChatContext } from "../context/ChatProvider.jsx";
 
 const HomePage = () => {
   const currentUser = useAuthStore().authUser.user;
 
-  const [selectedChat, setSelectedChat] = useState(null);
   const [chats, setChats] = useState([]);
 
   const [PicInfo, setPicInfo] = useState(null);
@@ -20,6 +20,9 @@ const HomePage = () => {
   const [messages, setMessages] = useState(null);
 
   const [text, setText] = useState("");
+
+  // const {setSelectedChat}=useChatContext()
+  const { user, selectedChat, setSelectedChat } = useChatContext();
 
   const handleGetMessages = useCallback(async (chatId) => {
     const res = await fetchMessages(chatId);
@@ -93,9 +96,8 @@ const HomePage = () => {
     <div className="h-vh flex sm:flex-row flex-col bg-base text-base-content h-full">
       {/* Chat List Sidebar */}
       <aside
-        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${
-          selectedChat ? "hidden sm:flex" : "flex"
-        }`}
+        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${selectedChat ? "hidden sm:flex" : "flex"
+          }`}
       >
         <div className="p-4 py-[1.63rem] flex items-center border-b border-base-300 font-bold text-lg bg-base-200">
           Chats
@@ -116,9 +118,8 @@ const HomePage = () => {
 
       {/* Chat Area */}
       <main
-        className={`flex-1 flex flex-col ${
-          selectedChat ? "flex" : "hidden sm:flex"
-        }`}
+        className={`flex-1 flex flex-col ${selectedChat ? "flex" : "hidden sm:flex"
+          }`}
       >
         {/* Header */}
         <div className="p-4 border-b border-base-300 bg-base-200 flex items-center justify-between">
