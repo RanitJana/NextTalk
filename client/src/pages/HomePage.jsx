@@ -6,6 +6,7 @@ import { getChatName, getProfilePic } from "../utils/chat.js";
 import ChatBox from "../components/ChatBox.jsx";
 import { socket } from "../socket.js";
 import { fetchMessages, postMessage } from "../api/message.api.js";
+import { ArrowLeft } from "lucide-react";
 
 const HomePage = () => {
   const currentUser = useAuthStore().authUser.user;
@@ -127,7 +128,7 @@ const HomePage = () => {
               className="sm:hidden btn btn-sm btn-ghost"
               onClick={handleBack}
             >
-              ⬅️
+              <ArrowLeft size={20} />
             </button>
             <div className="chatbox-chatImage w-[3rem] h-[3rem] rounded-full overflow-hidden">
               <img src={PicInfo} />
