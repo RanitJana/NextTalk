@@ -23,14 +23,12 @@ const invokeSocket = (server) => {
       io.emit("online:users", { users: Object.fromEntries(userSockets) });
     });
 
-    socket.on("connect:room", ({ users, room }) => {
-      userSockets.set(room, socket.id);
-      users.forEach((user) => userSockets.get(user)?.join(room));
+    socket.on("connect:room", ({ rooms, userId }) => {
+      rooms.forEach((room) => socket.join(room));
     });
 
     socket.on("message:send", (data) => {
-      console.log(data);
-      io.to(userSockets.get(data.to.toString())).emit("message:receive", data);
+      io.to(data.to.toString()).emit("message:receive", data);
     });
 
     socket.on("disconnect", () => {

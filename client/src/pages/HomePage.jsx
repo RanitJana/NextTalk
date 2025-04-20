@@ -27,33 +27,33 @@ const HomePage = () => {
     }
   }, []);
 
+  const getAllChats = useCallback(async () => {
+    const info = await fetchChats();
+    if (info?.chats) {
+      socket.emit("connect:room", {
+        rooms: info.chats.map((chat) => chat._id),
+        userId: currentUser?._id,
+      });
+      setChats(info.chats);
+    }
+  }, [currentUser?._id]);
+
   const handleSelectChat = async (chat) => {
-    socket.emit("connect:room", { users: chat.users, room: chat._id });
     setSelectedChat(chat);
     setChatName(getChatName(chat, currentUser._id));
     setPicInfo(getProfilePic(chat, currentUser._id));
     await handleGetMessages(chat._id);
   };
 
-  useEffect(() => {
-    const handleReceiveMessage = (data) => {
-      console.log(data);
-
-      setMessages((prev) => [
-        ...prev,
-        { sender: data.sender, content: data.text },
-      ]);
-    };
-    socket.on("message:receive", handleReceiveMessage);
-    return () => socket.off("message:receive", handleReceiveMessage);
-  }, []);
-
   const handleSendMessage = useCallback(async () => {
     if (!text.trim()) return;
 
+    const newText = text;
+    setText("");
+
     socket.emit("message:send", {
       to: selectedChat._id.toString(),
-      text,
+      text: newText,
       sender: {
         _id: currentUser?._id,
         name: currentUser?.name,
@@ -73,11 +73,15 @@ const HomePage = () => {
     setSelectedChat(null);
   };
 
-  const getAllChats = useCallback(async () => {
-    const info = await fetchChats();
-    if (info?.chats) {
-      setChats(info.chats);
-    }
+  useEffect(() => {
+    const handleReceiveMessage = (data) => {
+      setMessages((prev) => [
+        ...prev,
+        { sender: data.sender, content: data.text },
+      ]);
+    };
+    socket.on("message:receive", handleReceiveMessage);
+    return () => socket.off("message:receive", handleReceiveMessage);
   }, []);
 
   useEffect(() => {

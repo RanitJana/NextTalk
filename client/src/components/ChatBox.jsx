@@ -1,11 +1,36 @@
-import React from "react";
+import React, { memo, useEffect, useRef } from "react";
 
-const ChatBox = ({ messages = [], myId }) => {
+const SCROLL_THRESHOLD = 100; // pixels from bottom
+
+const ChatBox = memo(({ messages = [], myId }) => {
+  const containerRef = useRef(null);
+  const bottomRef = useRef(null);
+  const autoScrollRef = useRef(true);
+
+  // Track user scroll position
+  const handleScroll = () => {
+    const el = containerRef.current;
+    if (!el) return;
+    const distanceFromBottom =
+      el.scrollHeight - (el.scrollTop + el.clientHeight);
+    autoScrollRef.current = distanceFromBottom < SCROLL_THRESHOLD;
+  };
+
+  useEffect(() => {
+    if (autoScrollRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+  }, [messages]);
+
   return (
     <div className="relative w-full h-full overflow-y-auto">
-      <div className=" absolute top-0 left-0 he-full w-full flex-1 overflow-y-auto p-4 space-y-2 bg-base-100">
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="absolute top-0 left-0 h-full w-full flex-1 overflow-y-auto p-4 space-y-2 bg-base-100"
+      >
         {messages?.map((message, idx) => {
-          const ownMessage = message.sender._id.toString() == myId.toString();
+          const ownMessage = message.sender._id.toString() === myId.toString();
           return (
             <div
               key={idx}
@@ -21,9 +46,12 @@ const ChatBox = ({ messages = [], myId }) => {
             </div>
           );
         })}
+
+        {/* Invisible anchor for scrolling */}
+        <div ref={bottomRef} />
       </div>
     </div>
   );
-};
+});
 
 export default ChatBox;
