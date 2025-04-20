@@ -9,6 +9,7 @@ export default function useFetchChatDetails(chat) {
 
   const [chatName, setChatName] = useState("");
   const [chatIcon, setChatIcon] = useState(null);
+  const [anotherUserId, setAnotherUserId] = useState("");
 
   useEffect(() => {
     (() => {
@@ -22,13 +23,15 @@ export default function useFetchChatDetails(chat) {
         if (firstUser._id.toString() == user._id.toString()) {
           setChatName(secondUser.name);
           setChatIcon(secondUser.profilePic);
+          setAnotherUserId(secondUser._id);
         } else {
           setChatName(firstUser.name);
           setChatIcon(firstUser.profilePic);
+          setAnotherUserId(firstUser._id);
         }
       }
     })();
   }, [chat, user._id, isGroupChat]);
 
-  return { ...chat, chatName, chatIcon };
+  return { ...chat, chatName, chatIcon, anotherUserId };
 }
