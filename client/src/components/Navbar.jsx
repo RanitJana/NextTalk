@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useChatStore from "../store/useChatStore.js";
-
+import { debounce } from 'lodash';
 import {
   LogOut,
   MessageSquare,
@@ -32,30 +32,32 @@ const Navbar = () => {
     setChatName,
   } = useChatContext();
 
-  // Mock search function - replace with your actual search API call
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce(async (query) => {
+      if (query.trim() === "") {
+        setSearchResults([]);
+        return;
+      }
+      try {
+        const response = await getSearchResults(query);
+        setSearchResults(response.users);
+      } catch (error) {
+        console.error("Search failed", error);
+      }
+    }, 500),
+    []
+  );
+
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (searchQuery.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-    try {
-      const response = await getSearchResults(searchQuery);
-      setSearchResults(response.users);
-      setSearchQuery("");
-    } catch (error) {
-      console.error("Search failed", error);
-    }
+    await debouncedSearch(searchQuery);
   };
 
-  // Close mobile menu when route changes
-  // useEffect(() => {
-  //   setShowMobileMenu(false);
-  //   setShowMobileSearch(false);
-  //   setSearchResults([
-
-  //   ]);
-  // }, [location]);
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    debouncedSearch(e.target.value);
+  };
 
   const handleResultClick = async (result) => {
     let res = await createOneToOneChat(result._id);
@@ -67,6 +69,13 @@ const Navbar = () => {
     setSearchQuery("");
     setSearchResults([]);
   };
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   return (
     <header className="bg-base-100 border-b border-base-300 w-full top-0 z-40 bg-base-100/90 backdrop-blur-sm">
@@ -102,7 +111,7 @@ const Navbar = () => {
                 placeholder="Search messages, users, groups..."
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 onFocus={() =>
                   searchQuery && handleSearch({ preventDefault: () => {} })
                 }
@@ -171,7 +180,7 @@ const Navbar = () => {
                 placeholder="Search messages, users, groups..."
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 onFocus={() =>
                   searchQuery && handleSearch({ preventDefault: () => {} })
                 }
