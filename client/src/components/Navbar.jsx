@@ -33,6 +33,7 @@ const Navbar = () => {
 
     try {
       const users = await getSearchResults(searchQuery);
+
       if (users && users.length > 0) {
         const formatted = users.map((user) => ({
           id: user._id,
@@ -43,6 +44,7 @@ const Navbar = () => {
         }));
 
         setSearchResults(formatted);
+
       }
     } catch (error) {
       console.error("Search failed", error);
@@ -61,15 +63,13 @@ const Navbar = () => {
   };
 
   // Close mobile menu when route changes
-  useEffect(() => {
-    setShowMobileMenu(false);
-    setShowMobileSearch(false);
-    setSearchResults([
-      // { id: 1, title: "Conversation about React", type: "chat", preview: "We were discussing React hooks..." },
-      // { id: 2, title: "User: John Doe", type: "user", username: "johndoe" },
-      // { id: 3, title: "Group: Developers", type: "group", members: 24 },
-    ]);
-  }, [location]);
+  // useEffect(() => {
+  //   setShowMobileMenu(false);
+  //   setShowMobileSearch(false);
+  //   setSearchResults([
+
+  //   ]);
+  // }, [location]);
 
   const handleResultClick = async (result) => {
 
