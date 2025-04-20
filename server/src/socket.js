@@ -23,13 +23,20 @@ const invokeSocket = (server) => {
       io.emit("online:users", { users: Object.fromEntries(userSockets) });
     });
 
+    socket.on("connect:room", ({ rooms, userId }) => {
+      rooms.forEach((room) => socket.join(room));
+    });
+
+    socket.on("message:send", (data) => {
+      io.to(data.to.toString()).emit("message:receive", data);
+    });
+
     socket.on("disconnect", () => {
       userSockets.delete(currUser);
       currUser = null;
       io.emit("online:users", { users: Object.fromEntries(userSockets) });
     });
   });
-  
 };
 
 export default invokeSocket;

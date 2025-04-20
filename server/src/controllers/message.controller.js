@@ -1,6 +1,5 @@
 import AsyncHandler from "../utils/AsyncHandler.js";
 import messageSchema from "../models/message.model.js";
-import chatSchema from "../models/chat.model.js";
 import fs from "fs/promises";
 import { uploadFile } from "../utils/cloudinary.js";
 import path from "path";
