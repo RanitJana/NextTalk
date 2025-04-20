@@ -31,7 +31,6 @@ const useChatStore = create((set, get) => ({
       toast.success("Search results fetched successfully!");
       return data;
     } catch (error) {
-      toast.error("Error fetching search results!");
       set({ users: [] });
       console.error(
         "Error fetching search results:",

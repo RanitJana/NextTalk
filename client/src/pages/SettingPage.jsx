@@ -1,14 +1,24 @@
 import React from "react";
 import { THEMES } from "../constants/theme.js";
 import { useThemeStore } from "../store/useThemeStore.js";
-import { Palette, Moon, Sun, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Palette, Moon, Sun, Check, ArrowLeft } from "lucide-react";
 
 const SettingPage = () => {
   const { theme, setTheme } = useThemeStore();
+  const navigate = useNavigate();
 
   return (
     <div className="h-full w-full overflow-y-auto p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-4 flex items-center text-sm text-primary hover:underline gap-1"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
         {/* Header Section */}
         <div className="flex items-center gap-3 mb-6 sm:mb-8">
           <Palette className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -83,10 +93,9 @@ const SettingPage = () => {
             <button
               onClick={() => setTheme(theme.includes("dark") ? "light" : theme)}
               className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm
-                ${
-                  theme.includes("light")
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border hover:bg-accent/5"
+                ${theme.includes("light")
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:bg-accent/5"
                 }`}
             >
               <Sun className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -95,10 +104,9 @@ const SettingPage = () => {
             <button
               onClick={() => setTheme(theme.includes("light") ? "dark" : theme)}
               className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm
-                ${
-                  theme.includes("dark")
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border hover:bg-accent/5"
+                ${theme.includes("dark")
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:bg-accent/5"
                 }`}
             >
               <Moon className="w-3 h-3 sm:w-4 sm:h-4" />
