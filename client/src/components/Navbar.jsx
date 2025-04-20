@@ -12,9 +12,9 @@ import {
   Menu,
 } from "lucide-react";
 import { useChatContext } from "../context/ChatProvider.jsx";
+import { getChatName, getProfilePic } from "../utils/chat.js";
 
 const Navbar = () => {
-
   const { getSearchResults, createOneToOneChat } = useChatStore();
   const { logout, authUser } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,8 +23,14 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, selectedChat, setSelectedChat } = useChatContext();
-
+  const {
+    user,
+    setChats,
+    selectedChat,
+    setSelectedChat,
+    setPicInfo,
+    setChatName,
+  } = useChatContext();
 
   // Mock search function - replace with your actual search API call
   const handleSearch = async (e) => {
@@ -33,19 +39,13 @@ const Navbar = () => {
       setSearchResults([]);
       return;
     }
-
     try {
       const response = await getSearchResults(searchQuery);
-
-      console.log(response);
-
-      setSearchResults(response.users)
-      setSearchQuery(null)
+      setSearchResults(response.users);
+      setSearchQuery("");
     } catch (error) {
       console.error("Search failed", error);
     }
-
-
   };
 
   // Close mobile menu when route changes
@@ -58,35 +58,12 @@ const Navbar = () => {
   // }, [location]);
 
   const handleResultClick = async (result) => {
-
-    if (result.type === "user") {
-      try {
-        setSelectedChat(result)
-        // const chat = await createOneToOneChat(result._id); // Assuming result._id is userId
-        // if (chat) {
-        //   navigate(`/chat/${chat._id}`);
-        // }
-      } catch (error) {
-        console.error("Failed to create chat:", error);
-      }
-    }
-    else {
-
-      // Handle navigation based on result type
-      switch (result.type) {
-        case "chat":
-          navigate(`/chat/${result.id}`);
-          break;
-        case "user":
-          navigate(`/profile/${result.username}`);
-          break;
-        case "group":
-          navigate(`/group/${result.id}`);
-          break;
-        default:
-          break;
-      }
-    }
+    let res = await createOneToOneChat(result._id);
+    setChats((prev) => [res.chat, ...prev]);
+    setSelectedChat(res.chat);
+    setChatName(getChatName(res.chat, user._id));
+    setPicInfo(getProfilePic(res.chat, user._id));
+    setShowMobileSearch(false);
     setSearchQuery("");
     setSearchResults([]);
   };
@@ -127,7 +104,7 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() =>
-                  searchQuery && handleSearch({ preventDefault: () => { } })
+                  searchQuery && handleSearch({ preventDefault: () => {} })
                 }
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -137,7 +114,7 @@ const Navbar = () => {
                 <div className="absolute top-full left-0 w-full bg-base-100 shadow-lg z-50 rounded-md mt-1 max-h-64 overflow-y-auto">
                   {searchResults.map((result) => (
                     <div
-                      key={result.id}
+                      key={result._id}
                       className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors flex items-center gap-3"
                       onClick={() => handleResultClick(result)}
                     >
@@ -196,7 +173,7 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() =>
-                  searchQuery && handleSearch({ preventDefault: () => { } })
+                  searchQuery && handleSearch({ preventDefault: () => {} })
                 }
                 autoFocus
               />
@@ -204,33 +181,21 @@ const Navbar = () => {
 
               {/* Mobile Search Results */}
               {searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-base-100 border-t border-base-300 shadow-lg z-50">
-                  <div className="py-1 max-h-60 overflow-y-auto">
-                    {searchResults.map((result) => (
-                      <div
-                        key={result.id}
-                        className="px-4 py-3 hover:bg-base-200 cursor-pointer transition-colors"
-                        onClick={() => handleResultClick(result)}
-                      >
-                        <div className="font-medium">{result.title}</div>
-                        {result.preview && (
-                          <div className="text-sm text-base-content/70 truncate">
-                            {result.preview}
-                          </div>
-                        )}
-                        {result.type === "user" && (
-                          <div className="text-sm text-base-content/70">
-                            User profile
-                          </div>
-                        )}
-                        {result.type === "group" && (
-                          <div className="text-sm text-base-content/70">
-                            {result.members} members
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                <div className="absolute top-full left-0 w-full bg-base-100 shadow-lg z-50 rounded-md mt-1 max-h-64 overflow-y-auto">
+                  {searchResults.map((result) => (
+                    <div
+                      key={result._id}
+                      className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors flex items-center gap-3"
+                      onClick={() => handleResultClick(result)}
+                    >
+                      <img
+                        src={result.profilePic}
+                        alt={result.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <div className="text-sm">{result.name}</div>
+                    </div>
+                  ))}
                 </div>
               )}
             </form>

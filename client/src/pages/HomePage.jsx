@@ -12,10 +12,10 @@ import { useChatContext } from "../context/ChatProvider.jsx";
 const HomePage = () => {
   const currentUser = useAuthStore().authUser.user;
 
-  const [chats, setChats] = useState([]);
+  // const [chats, setChats] = useState([]);
 
-  const [PicInfo, setPicInfo] = useState(null);
-  const [chatName, setChatName] = useState(null);
+  const { chats, setChats, setChatName, setPicInfo, PicInfo, chatName } =
+    useChatContext();
 
   const [messages, setMessages] = useState(null);
 
@@ -75,6 +75,7 @@ const HomePage = () => {
 
   const handleBack = () => {
     setSelectedChat(null);
+    setPicInfo("");
   };
 
   useEffect(() => {
@@ -96,8 +97,9 @@ const HomePage = () => {
     <div className="h-vh flex sm:flex-row flex-col bg-base text-base-content h-full">
       {/* Chat List Sidebar */}
       <aside
-        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${selectedChat ? "hidden sm:flex" : "flex"
-          }`}
+        className={`w-[100%] sm:max-w-[20rem] border-r border-base-300 flex flex-col h-full ${
+          selectedChat ? "hidden sm:flex" : "flex"
+        }`}
       >
         <div className="p-4 py-[1.63rem] flex items-center border-b border-base-300 font-bold text-lg bg-base-200">
           Chats
@@ -118,8 +120,9 @@ const HomePage = () => {
 
       {/* Chat Area */}
       <main
-        className={`flex-1 flex flex-col ${selectedChat ? "flex" : "hidden sm:flex"
-          }`}
+        className={`flex-1 flex flex-col ${
+          selectedChat ? "flex" : "hidden sm:flex"
+        }`}
       >
         {/* Header */}
         <div className="p-4 border-b border-base-300 bg-base-200 flex items-center justify-between">
