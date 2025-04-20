@@ -99,4 +99,44 @@ const putInfo = AsyncHandler(async (req, res) => {
   });
 });
 
-export { putAvatar, putInfo };
+const allUsers = AsyncHandler(async (req, res) => {
+
+  /* @description     Get or Search all users by name or email ( except me )
+   * @route           GET /api/user?search=XYZ {NAME OR EMAIL PORTION}
+   */
+  /*
+   * step#1: find keyword by which searched . here XYZ
+   * step#2: find user(s) by keyword
+   * step#3: send users object. If not found, send empty object
+   */
+
+
+  // step#1: find keyword by which searched . here XYZ
+  const keyword = req.query.search
+    ? {
+      $or: [
+        { name: { $regex: req.query.search, $options: "i" } },
+        { email: { $regex: req.query.search, $options: "i" } },
+      ],
+    }
+    : {};
+
+  // step#2: find user(s) by keyword
+  const users = await userSchema
+    .find(keyword)
+    .find({ _id: { $ne: req.user._id } })
+    .select("-password")
+
+  // console.log(users);
+
+  // step#3: send users object. If not found, send empty object
+  return res
+    .status(200)
+    .json({
+      "success": true,
+      "message": "users found successfully",
+      users: users,
+    })
+});
+
+export { putAvatar, putInfo, allUsers };
