@@ -8,6 +8,7 @@ import { socket } from "../socket.js";
 import { fetchMessages, postMessage } from "../api/message.api.js";
 import { ArrowLeft } from "lucide-react";
 import { useChatContext } from "../context/ChatProvider.jsx";
+import { useSocketContext } from "../context/SocketProvider.jsx";
 
 const HomePage = () => {
   const currentUser = useAuthStore().authUser.user;
@@ -16,8 +17,10 @@ const HomePage = () => {
 
   const { chats, setChats, setChatName, setPicInfo, PicInfo, chatName } =
     useChatContext();
+  const { online } = useSocketContext();
 
   const [messages, setMessages] = useState(null);
+  const [anotherUserId, setAnotherUserId] = useState("");
 
   const [text, setText] = useState("");
 
@@ -40,12 +43,20 @@ const HomePage = () => {
       });
       setChats(info.chats);
     }
-  }, [currentUser?._id]);
+  }, [currentUser?._id, setChats]);
 
   const handleSelectChat = async (chat) => {
     setSelectedChat(chat);
     setChatName(getChatName(chat, currentUser._id));
     setPicInfo(getProfilePic(chat, currentUser._id));
+    setAnotherUserId(() => {
+      const firstUser = chat.users[0],
+        secondUser = chat.users[1];
+
+      if (firstUser._id == user._id) return secondUser._id;
+
+      return firstUser._id;
+    });
     await handleGetMessages(chat._id);
   };
 
@@ -134,8 +145,15 @@ const HomePage = () => {
             >
               <ArrowLeft size={20} />
             </button>
-            <div className="chatbox-chatImage w-[3rem] h-[3rem] rounded-full overflow-hidden">
-              <img src={PicInfo} />
+            <div className="relative">
+              <div className="chatbox-chatImage w-[3rem] h-[3rem] rounded-full overflow-hidden">
+                <img src={PicInfo} />
+              </div>
+              {selectedChat &&
+                !selectedChat.isGroupChat &&
+                online[anotherUserId] && (
+                  <div className="absolute right-0 bottom-1 w-3 h-3 bg-green-600 rounded-full"></div>
+                )}
             </div>
 
             <div className="font-semibold">
@@ -143,7 +161,9 @@ const HomePage = () => {
             </div>
           </div>
           {selectedChat && !selectedChat.isGroupChat && (
-            <div className="text-sm text-base-content/70">Online</div>
+            <div className="text-sm text-base-content/70">
+              {online[anotherUserId] ? "Online" : "Offline"}
+            </div>
           )}
         </div>
 
