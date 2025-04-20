@@ -72,7 +72,7 @@ const SettingPage = () => {
         {/* Light/Dark Mode Toggle */}
         <div className="space-y-4">
           <h2 className="text-base sm:text-lg font-semibold flex items-center gap-2">
-            {theme.includes('dark') ? (
+            {theme.includes("dark") ? (
               <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
             ) : (
               <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -81,22 +81,24 @@ const SettingPage = () => {
           </h2>
           <div className="flex gap-3 sm:gap-4">
             <button
-              onClick={() => setTheme(theme.includes('dark') ? 'light' : theme)}
+              onClick={() => setTheme(theme.includes("dark") ? "light" : theme)}
               className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm
-                ${theme.includes('light') 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:bg-accent/5'
+                ${
+                  theme.includes("light")
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border hover:bg-accent/5"
                 }`}
             >
               <Sun className="w-3 h-3 sm:w-4 sm:h-4" />
               Light
             </button>
             <button
-              onClick={() => setTheme(theme.includes('light') ? 'dark' : theme)}
+              onClick={() => setTheme(theme.includes("light") ? "dark" : theme)}
               className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm
-                ${theme.includes('dark') 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:bg-accent/5'
+                ${
+                  theme.includes("dark")
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border hover:bg-accent/5"
                 }`}
             >
               <Moon className="w-3 h-3 sm:w-4 sm:h-4" />

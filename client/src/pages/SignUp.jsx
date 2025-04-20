@@ -1,7 +1,14 @@
 import { useAuthStore } from "../store/useAuthStore.js";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Upload, Image as ImageIcon, X, Loader2, Eye, EyeOff } from "lucide-react";
+import {
+  Upload,
+  Image as ImageIcon,
+  X,
+  Loader2,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function SignupPage() {
@@ -65,13 +72,13 @@ export default function SignupPage() {
           <div className="flex justify-center mb-6">
             <div className="relative">
               <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
-                <img 
+                <img
                   src={previewImage}
                   alt="Profile Preview"
                   className="w-full h-full object-cover"
                 />
               </div>
-              
+
               {/* Upload Button (bottom-right, overlapping) */}
               <label className="absolute bottom-0 right-0 cursor-pointer">
                 <div className="bg-white rounded-full p-1.5 border-2 border-gray-300 hover:bg-gray-100 transition shadow-sm">
@@ -163,7 +170,10 @@ export default function SignupPage() {
             <div className="text-center mt-4">
               <p className="text-sm">
                 Already have an account?{" "}
-                <Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
+                <Link
+                  to="/login"
+                  className="text-blue-600 hover:text-blue-800 font-medium"
+                >
                   Log In
                 </Link>
               </p>

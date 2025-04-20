@@ -9,16 +9,16 @@ export default function UpdateProfile() {
   const [name, setName] = useState(currentUser.authUser.user.name);
   const [email, setEmail] = useState(currentUser.authUser.user.email);
   const [bio, setBio] = useState(currentUser.authUser.user.bio);
-  const [profilePic, setProfilePic] = useState(currentUser.authUser.user.profilePic);
-  const [previewImage, setPreviewImage] = useState(currentUser.authUser.user.profilePic);
+  const [profilePic, setProfilePic] = useState(
+    currentUser.authUser.user.profilePic
+  );
+  const [previewImage, setPreviewImage] = useState(
+    currentUser.authUser.user.profilePic
+  );
 
-  const {
-    register,
-    handleSubmit,
-  } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const { updateProfile, isUpdatingProfile } = useAuthStore();
-
 
   const onSubmit = () => {
     const formData = {
@@ -72,7 +72,7 @@ export default function UpdateProfile() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                
+
                 {/* Upload Button (bottom-right, overlapping) */}
                 <label className="absolute bottom-0 right-0 cursor-pointer">
                   <div className="bg-white rounded-full p-1.5 border-2 border-gray-300 hover:bg-gray-100 transition shadow-sm">

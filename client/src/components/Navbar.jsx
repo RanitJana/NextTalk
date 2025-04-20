@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogOut, MessageSquare, Settings, User, Search, Menu } from "lucide-react";
+import useChatStore from "../store/useChatStore.js";
+
+import {
+  LogOut,
+  MessageSquare,
+  Settings,
+  User,
+  Search,
+  Menu,
+} from "lucide-react";
 
 const Navbar = () => {
+
+  const { getSearchResults, createOneToOneChat } = useChatStore();
   const { logout, authUser } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -13,22 +24,39 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   // Mock search function - replace with your actual search API call
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (searchQuery.trim() === "") {
       setSearchResults([]);
       return;
     }
-    
+
+    try {
+      const users = await getSearchResults(searchQuery);
+      if (users && users.length > 0) {
+        const formatted = users.map((user) => ({
+          id: user._id,
+          _id: user._id,
+          name: user.name,
+          profilePic: user.profilePic,
+          type: "user",
+        }));
+
+        setSearchResults(formatted);
+      }
+    } catch (error) {
+      console.error("Search failed", error);
+    }
+
     // Mock results - replace with your actual search logic
     // const mockResults = [
     //   { id: 1, title: "Conversation about React", type: "chat", preview: "We were discussing React hooks..." },
     //   { id: 2, title: "User: John Doe", type: "user", username: "johndoe" },
     //   { id: 3, title: "Group: Developers", type: "group", members: 24 },
-    // ].filter(item => 
+    // ].filter(item =>
     //   item.title.toLowerCase().includes(searchQuery.toLowerCase())
     // );
-    
+
     // setSearchResults(mockResults.slice(0, 3)); // Limit to 3 results
   };
 
@@ -37,28 +65,40 @@ const Navbar = () => {
     setShowMobileMenu(false);
     setShowMobileSearch(false);
     setSearchResults([
-
       // { id: 1, title: "Conversation about React", type: "chat", preview: "We were discussing React hooks..." },
       // { id: 2, title: "User: John Doe", type: "user", username: "johndoe" },
       // { id: 3, title: "Group: Developers", type: "group", members: 24 },
-
     ]);
   }, [location]);
 
-  const handleResultClick = (result) => {
-    // Handle navigation based on result type
-    switch(result.type) {
-      case 'chat':
-        navigate(`/chat/${result.id}`);
-        break;
-      case 'user':
-        navigate(`/profile/${result.username}`);
-        break;
-      case 'group':
-        navigate(`/group/${result.id}`);
-        break;
-      default:
-        break;
+  const handleResultClick = async (result) => {
+
+    if (result.type === "user") {
+      try {
+        const chat = await createOneToOneChat(result._id); // Assuming result._id is userId
+        if (chat) {
+          navigate(`/chat/${chat._id}`);
+        }
+      } catch (error) {
+        console.error("Failed to create chat:", error);
+      }
+    }
+    else {
+
+      // Handle navigation based on result type
+      switch (result.type) {
+        case "chat":
+          navigate(`/chat/${result.id}`);
+          break;
+        case "user":
+          navigate(`/profile/${result.username}`);
+          break;
+        case "group":
+          navigate(`/group/${result.id}`);
+          break;
+        default:
+          break;
+      }
     }
     setSearchQuery("");
     setSearchResults([]);
@@ -71,7 +111,7 @@ const Navbar = () => {
           {/* Logo and Mobile Menu Button */}
           <div className="flex items-center gap-4">
             {/* Mobile Menu Button */}
-            <button 
+            <button
               className="md:hidden p-2 rounded-full hover:bg-base-200 transition-colors"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
@@ -99,35 +139,29 @@ const Navbar = () => {
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => searchQuery && handleSearch({ preventDefault: () => {} })}
+                onFocus={() =>
+                  searchQuery && handleSearch({ preventDefault: () => { } })
+                }
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              
+
               {/* Search Results Dropdown */}
               {searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50">
-                  <div className="py-1 max-h-60 overflow-y-auto">
-                    {searchResults.map((result) => (
-                      <div
-                        key={result.id}
-                        className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors"
-                        onClick={() => handleResultClick(result)}
-                      >
-                        <div className="font-medium">{result.title}</div>
-                        {result.preview && (
-                          <div className="text-xs text-base-content/70 truncate">
-                            {result.preview}
-                          </div>
-                        )}
-                        {result.type === 'user' && (
-                          <div className="text-xs text-base-content/70">User profile</div>
-                        )}
-                        {result.type === 'group' && (
-                          <div className="text-xs text-base-content/70">{result.members} members</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                <div className="absolute top-full left-0 w-full bg-base-100 shadow-lg z-50 rounded-md mt-1 max-h-64 overflow-y-auto">
+                  {searchResults.map((result) => (
+                    <div
+                      key={result.id}
+                      className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors flex items-center gap-3"
+                      onClick={() => handleResultClick(result)}
+                    >
+                      <img
+                        src={result.profilePic}
+                        alt={result.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <div className="text-sm">{result.name}</div>
+                    </div>
+                  ))}
                 </div>
               )}
             </form>
@@ -135,7 +169,7 @@ const Navbar = () => {
 
           {/* Mobile Search Button */}
           <div className="md:hidden flex items-center gap-2">
-            <button 
+            <button
               className="p-2 rounded-full hover:bg-base-200 transition-colors"
               onClick={() => setShowMobileSearch(!showMobileSearch)}
             >
@@ -174,11 +208,13 @@ const Navbar = () => {
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => searchQuery && handleSearch({ preventDefault: () => {} })}
+                onFocus={() =>
+                  searchQuery && handleSearch({ preventDefault: () => { } })
+                }
                 autoFocus
               />
               <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              
+
               {/* Mobile Search Results */}
               {searchResults.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-base-100 border-t border-base-300 shadow-lg z-50">
@@ -195,11 +231,15 @@ const Navbar = () => {
                             {result.preview}
                           </div>
                         )}
-                        {result.type === 'user' && (
-                          <div className="text-sm text-base-content/70">User profile</div>
+                        {result.type === "user" && (
+                          <div className="text-sm text-base-content/70">
+                            User profile
+                          </div>
                         )}
-                        {result.type === 'group' && (
-                          <div className="text-sm text-base-content/70">{result.members} members</div>
+                        {result.type === "group" && (
+                          <div className="text-sm text-base-content/70">
+                            {result.members} members
+                          </div>
                         )}
                       </div>
                     ))}
@@ -213,8 +253,8 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {showMobileMenu && (
           <div className="md:hidden bg-base-100 border-t border-base-300 py-2 px-4 space-y-2">
-            <Link 
-              to="/settings" 
+            <Link
+              to="/settings"
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-base-200 transition-colors"
             >
               <Settings className="w-5 h-5" />
@@ -222,14 +262,14 @@ const Navbar = () => {
             </Link>
             {authUser && (
               <>
-                <Link 
-                  to="/profile" 
+                <Link
+                  to="/profile"
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-base-200 transition-colors"
                 >
                   <User className="w-5 h-5" />
                   <span>Profile</span>
                 </Link>
-                <button 
+                <button
                   className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-base-200 transition-colors text-left"
                   onClick={logout}
                 >

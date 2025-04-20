@@ -83,8 +83,8 @@ export default function LogInPage() {
             <div className="text-center">
               <p className="text-sm">
                 Don't have an account?{" "}
-                <Link 
-                  to="/signup" 
+                <Link
+                  to="/signup"
                   className="text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Sign up

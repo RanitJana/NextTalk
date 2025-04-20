@@ -135,6 +135,7 @@ const allUsers = AsyncHandler(async (req, res) => {
     .json({
       "success": true,
       "message": "users found successfully",
+      type: "user",
       users: users,
     })
 });
