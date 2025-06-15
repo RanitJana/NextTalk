@@ -104,41 +104,43 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Search Bar with Results */}
-          <div className="hidden md:flex flex-1 max-w-md mx-4 relative">
-            <form onSubmit={handleSearch} className="w-full relative">
-              <input
-                type="text"
-                placeholder="Search messages, users, groups..."
-                className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onFocus={() =>
-                  searchQuery && handleSearch({ preventDefault: () => {} })
-                }
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          {authUser && (
+            <div className="hidden md:flex flex-1 max-w-md mx-4 relative">
+              <form onSubmit={handleSearch} className="w-full relative">
+                <input
+                  type="text"
+                  placeholder="Search messages, users, groups..."
+                  className="w-full pl-10 pr-4 py-2 rounded-full border border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all bg-base-200/50"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onFocus={() =>
+                    searchQuery && handleSearch({ preventDefault: () => { } })
+                  }
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
 
-              {/* Search Results Dropdown */}
-              {searchResults.length > 0 && (
-                <div className="absolute top-full left-0 w-full bg-base-100 shadow-lg z-50 rounded-md mt-1 max-h-64 overflow-y-auto">
-                  {searchResults.map((result) => (
-                    <div
-                      key={result._id}
-                      className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors flex items-center gap-3"
-                      onClick={() => handleResultClick(result)}
-                    >
-                      <img
-                        src={result.profilePic}
-                        alt={result.name}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <div className="text-sm">{result.name}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </form>
-          </div>
+                {/* Search Results Dropdown */}
+                {searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 w-full bg-base-100 shadow-lg z-50 rounded-md mt-1 max-h-64 overflow-y-auto">
+                    {searchResults.map((result) => (
+                      <div
+                        key={result._id}
+                        className="px-4 py-2 hover:bg-base-200 cursor-pointer transition-colors flex items-center gap-3"
+                        onClick={() => handleResultClick(result)}
+                      >
+                        <img
+                          src={result.profilePic}
+                          alt={result.name}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <div className="text-sm">{result.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </form>
+            </div>
+          )}
 
           {/* Mobile Search Button */}
           <div className="md:hidden flex items-center gap-2">
@@ -182,7 +184,7 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={() =>
-                  searchQuery && handleSearch({ preventDefault: () => {} })
+                  searchQuery && handleSearch({ preventDefault: () => { } })
                 }
                 autoFocus
               />
