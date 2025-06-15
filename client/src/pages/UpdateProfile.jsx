@@ -1,10 +1,12 @@
 import { useAuthStore } from "../store/useAuthStore.js";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Upload, Image as ImageIcon, X, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Upload, Image as ImageIcon, X, Loader2, ArrowLeft } from "lucide-react";
 
 export default function UpdateProfile() {
   const currentUser = useAuthStore();
+  const navigate = useNavigate();
 
   const [name, setName] = useState(currentUser.authUser.user.name);
   const [email, setEmail] = useState(currentUser.authUser.user.email);
@@ -57,7 +59,17 @@ export default function UpdateProfile() {
 
       <div className="relative h-full overflow-auto">
         <div className="h-full min-h-[35rem] flex items-center justify-center p-4 absolute left-0 right-0">
+
+
           <div className="w-full max-w-md p-8 rounded-xl border">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-4 flex items-center text-sm text-primary hover:underline gap-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
             <h2 className="text-2xl font-bold mb-6 text-center">
               Profile Update
             </h2>
